@@ -14,8 +14,8 @@ namespace Anamnesis.GameData.ViewModels
 		public NpcBaseViewModel(int key, ExcelSheet<ENpcBase> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
-			this.Race = GameDataService.Races!.Get((int)this.Value.Race.Value.RowId);
-			this.Tribe = GameDataService.Tribes!.Get((int)this.Value.Tribe.Value.RowId);
+			this.Race = GameDataService.Races!.Get((int)this.Value.Race.Value!.RowId);
+			this.Tribe = GameDataService.Tribes!.Get((int)this.Value.Tribe.Value!.RowId);
 		}
 
 		public IRace Race { get; private set; }

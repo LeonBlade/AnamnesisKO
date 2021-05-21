@@ -12,7 +12,7 @@ namespace Anamnesis.GameData.ViewModels
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
-	public class ItemViewModel : ExcelRowViewModel<Item>, IItem
+	public class ItemViewModel : ExcelRowViewModel<Sheets.Item>, IItem
 	{
 		private ushort modelSet;
 		private ushort modelBase;
@@ -22,12 +22,12 @@ namespace Anamnesis.GameData.ViewModels
 		private ushort subModelBase;
 		private ushort subModelVariant;
 
-		private ClassJobCategory classJob;
+		private Sheets.ClassJobCategory? classJob;
 
-		public ItemViewModel(int key, ExcelSheet<Item> sheet, GameData lumina)
+		public ItemViewModel(int key, ExcelSheet<Sheets.Item> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
-			this.classJob = this.Value.ClassJobCategory.Value;
+			this.classJob = this.Value.ClassJobCategory!.Value;
 
 			LuminaExtensions.GetModel(this.Value.ModelMain, this.IsWeapon, out this.modelSet, out this.modelBase, out this.modelVariant);
 			LuminaExtensions.GetModel(this.Value.ModelSub, this.IsWeapon, out this.subModelSet, out this.subModelBase, out this.subModelVariant);
@@ -35,8 +35,8 @@ namespace Anamnesis.GameData.ViewModels
 			this.Mod = TexToolsService.GetMod(this);
 		}
 
-		public override string Name => this.Value.Name;
-		public override string? Description => this.Value.Description;
+		public override string Name => this.Value.Name!;
+		public override string? Description => this.Value.Description!;
 		public ImageSource? Icon => this.lumina.GetImage(this.Value.Icon);
 		public ushort ModelSet => this.modelSet;
 		public ushort ModelBase => this.modelBase;
@@ -45,7 +45,7 @@ namespace Anamnesis.GameData.ViewModels
 		public ushort SubModelSet => this.subModelSet;
 		public ushort SubModelBase => this.subModelBase;
 		public ushort SubModelVariant => this.subModelVariant;
-		public Classes EquipableClasses => this.classJob.ToFlags();
+		public Classes EquipableClasses => this.classJob!.ToFlags();
 
 		public bool IsWeapon => this.FitsInSlot(ItemSlots.MainHand) || this.FitsInSlot(ItemSlots.OffHand);
 
@@ -59,7 +59,7 @@ namespace Anamnesis.GameData.ViewModels
 
 		public bool FitsInSlot(ItemSlots slot)
 		{
-			return this.Value.EquipSlotCategory.Value.Contains(slot);
+			return this.Value.EquipSlotCategory!.Value!.Contains(slot);
 		}
 	}
 }

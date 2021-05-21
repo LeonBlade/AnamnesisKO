@@ -10,11 +10,11 @@ namespace Anamnesis.GameData.ViewModels
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
-	public class TerritoryTypeViewModel : ExcelRowViewModel<TerritoryType>, ITerritoryType
+	public class TerritoryTypeViewModel : ExcelRowViewModel<Sheets.TerritoryType>, ITerritoryType
 	{
 		private readonly List<IWeather> weathers = new List<IWeather>();
 
-		public TerritoryTypeViewModel(int key, ExcelSheet<TerritoryType> sheet, GameData lumina)
+		public TerritoryTypeViewModel(int key, ExcelSheet<Sheets.TerritoryType> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 			this.GetWeathers();
@@ -33,7 +33,7 @@ namespace Anamnesis.GameData.ViewModels
 
 			this.weathers.Clear();
 
-			WeatherRate weatherRate = GameDataService.WeatherRates!.GetRow((uint)this.Value.WeatherRate);
+			WeatherRate? weatherRate = GameDataService.WeatherRates!.GetRow(this.Value.WeatherRate);
 
 			if (weatherRate != null && weatherRate.UnkStruct0 != null)
 			{

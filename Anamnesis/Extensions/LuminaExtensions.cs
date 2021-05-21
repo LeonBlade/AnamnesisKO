@@ -76,8 +76,8 @@ namespace Lumina
 
 		public static ImageSource? GetImage(this LuminaData self, int imageId)
 		{
-			TexFile tex = self.GetIcon(imageId);
-			return tex.GetImage();
+			TexFile? tex = self.GetIcon(imageId);
+			return tex!.GetImage();
 		}
 
 		public static ImageSource? GetImage(this TexFile self)
@@ -91,7 +91,7 @@ namespace Lumina
 			return bmp;
 		}
 
-		public static bool Contains(this ClassJobCategory self, Classes classJob)
+		public static bool Contains(this Anamnesis.GameData.Sheets.ClassJobCategory self, Classes classJob)
 		{
 			string abr = classJob.GetAbbreviation();
 			PropertyInfo? property = self.GetType().GetProperty(abr, BindingFlags.Public | BindingFlags.Instance);
@@ -107,7 +107,7 @@ namespace Lumina
 			return (bool)val;
 		}
 
-		public static Classes ToFlags(this ClassJobCategory self)
+		public static Classes ToFlags(this Anamnesis.GameData.Sheets.ClassJobCategory self)
 		{
 			Classes classes = Classes.None;
 

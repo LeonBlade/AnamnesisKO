@@ -18,7 +18,7 @@ namespace Anamnesis.GameData.Sheets
 		where TConcreteType : ExcelRow
 		where TWrapperType : ExcelRowViewModel<TConcreteType>, TInterfaceType
 	{
-		private ExcelSheet<TConcreteType> excel;
+		private ExcelSheet<TConcreteType>? excel;
 		private Dictionary<int, TWrapperType> wrapperCache = new Dictionary<int, TWrapperType>();
 		private List<TInterfaceType>? all;
 
@@ -38,7 +38,7 @@ namespace Anamnesis.GameData.Sheets
 				{
 					this.all = new List<TInterfaceType>();
 
-					foreach (TConcreteType? entry in this.excel)
+					foreach (TConcreteType? entry in this.excel!)
 					{
 						TInterfaceType viewModel = this.Get((int)entry.RowId);
 						this.all.Add(viewModel);
@@ -61,7 +61,7 @@ namespace Anamnesis.GameData.Sheets
 
 		public bool Contains(int key)
 		{
-			TConcreteType? row = this.excel.GetRow((uint)key);
+			TConcreteType? row = this.excel!.GetRow((uint)key);
 			return row != null;
 		}
 

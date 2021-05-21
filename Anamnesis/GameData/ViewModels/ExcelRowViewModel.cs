@@ -15,7 +15,9 @@ namespace Anamnesis.GameData.ViewModels
 
 		private ExcelSheet<T> sheet;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 		public ExcelRowViewModel(int key, ExcelSheet<T> sheet, GameData lumina)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 		{
 			this.sheet = sheet;
 			this.Key = key;
@@ -23,7 +25,9 @@ namespace Anamnesis.GameData.ViewModels
 
 			try
 			{
+#pragma warning disable CS8601 // Possible null reference assignment.
 				this.Value = this.sheet.GetRow((uint)this.Key);
+#pragma warning restore CS8601 // Possible null reference assignment.
 			}
 			catch (Exception ex)
 			{

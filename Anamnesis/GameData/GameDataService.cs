@@ -33,7 +33,7 @@ namespace Anamnesis.Services
 		public static ICharaMakeCustomizeData CharacterMakeCustomize { get; protected set; }
 		public static ISheet<ICharaMakeType> CharacterMakeTypes { get; protected set; }
 		public static ISheet<INpcResident> ResidentNPCs { get; protected set; }
-		public static ExcelSheet<WeatherRate> WeatherRates { get; protected set; }
+		public static ExcelSheet<WeatherRate>? WeatherRates { get; protected set; }
 		public static ISheet<Monster> Monsters { get; private set; }
 		public static ISheet<Prop> Props { get; private set; }
 		#pragma warning restore CS8618
@@ -50,7 +50,13 @@ namespace Anamnesis.Services
 
 			try
 			{
-				this.lumina = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\");
+				Lumina.LuminaOptions options = new Lumina.LuminaOptions()
+				{
+					DefaultExcelLanguage = Lumina.Data.Language.Korean,
+					PanicOnSheetChecksumMismatch = false,
+				};
+
+				this.lumina = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\", options);
 			}
 			catch (Exception ex)
 			{
@@ -59,10 +65,10 @@ namespace Anamnesis.Services
 
 			Races = new LuminaSheet<IRace, Race, RaceViewModel>(this.lumina);
 			Tribes = new LuminaSheet<ITribe, Tribe, TribeViewModel>(this.lumina);
-			Items = new LuminaSheet<IItem, Lumina.Excel.GeneratedSheets.Item, GameData.ViewModels.ItemViewModel>(this.lumina);
+			Items = new LuminaSheet<IItem, GameData.Sheets.Item, GameData.ViewModels.ItemViewModel>(this.lumina);
 			Dyes = new LuminaSheet<IDye, Stain, DyeViewModel>(this.lumina);
 			BaseNPCs = new LuminaSheet<INpcBase, ENpcBase, NpcBaseViewModel>(this.lumina);
-			Territories = new LuminaSheet<ITerritoryType, TerritoryType, TerritoryTypeViewModel>(this.lumina);
+			Territories = new LuminaSheet<ITerritoryType, GameData.Sheets.TerritoryType, TerritoryTypeViewModel>(this.lumina);
 			Weathers = new LuminaSheet<IWeather, Weather, WeatherViewModel>(this.lumina);
 			CharacterMakeCustomize = new CustomizeSheet(this.lumina);
 			CharacterMakeTypes = new LuminaSheet<ICharaMakeType, GameData.Sheets.CharaMakeType, CharaMakeTypeViewModel>(this.lumina);
