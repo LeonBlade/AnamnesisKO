@@ -164,13 +164,13 @@ namespace Anamnesis.Core.Memory
 			// TODO: replace these manual CMTool offsets with signatures
 			IntPtr baseAddress = MemoryService.Process.MainModule.BaseAddress;
 
-			Weather = baseAddress + 0x1D6D3C8;	// WeaptherOffset
-			GPoseActorTable = baseAddress + 0x1DB9560;	// GPoseEntityOffset
-			GPoseTargetManager = baseAddress + 0x1DB9560;	// GPoseEntityOffset
-			GPoseFilters = baseAddress + 0x1D95BD8;
-			GposeCheck = baseAddress + 0x1DBBD60;
-			GposeCheck2 = baseAddress + 0x1DBBD40;
-			GPose = baseAddress + 0x1DB8180;
+			Weather = baseAddress + 0x1D3CFB8;	// WeaptherOffset
+			GPoseActorTable = baseAddress + 0x1D88960;	// GPoseEntityOffset
+			GPoseTargetManager = baseAddress + 0x1D88960;	// GPoseEntityOffset
+			GPoseFilters = baseAddress + 0x1D655B8;
+			GposeCheck = baseAddress + 0x1D8B160;
+			GposeCheck2 = baseAddress + 0x1D8B140;
+			GPose = baseAddress + 0x1D87580;
 
 			await Task.WhenAll(tasks.ToArray());
 

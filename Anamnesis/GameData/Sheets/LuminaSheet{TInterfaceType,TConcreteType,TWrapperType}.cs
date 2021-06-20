@@ -44,7 +44,7 @@ namespace Anamnesis.GameData.Sheets
 				{
 					this.all = new List<TInterfaceType>();
 
-					foreach (TConcreteType? entry in this.excel)
+					foreach (TConcreteType? entry in this.excel!)
 					{
 						TInterfaceType viewModel = this.Get(entry.RowId);
 						this.all.Add(viewModel);
@@ -67,7 +67,7 @@ namespace Anamnesis.GameData.Sheets
 
 		public bool Contains(uint key)
 		{
-			TConcreteType? row = this.excel.GetRow((uint)key);
+			TConcreteType? row = this.excel!.GetRow((uint)key);
 			return row != null;
 		}
 
