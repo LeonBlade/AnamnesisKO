@@ -13,12 +13,17 @@ namespace UpdateExtractor
 	{
 		public static void Main(string[] args)
 		{
-			string targetPath = args[0];
-			string processName = args[1];
-			Console.WriteLine($"{processName} Updater");
+			string processName = "Unknown";
 
 			try
 			{
+				if (args.Length != 2)
+					throw new Exception("Invalid arguments. Update Extractor must be run with the following arguments: 1) destination directory, 2) name of orignal process.");
+
+				string? destDir = args[0];
+				processName = args[1];
+				Console.WriteLine($"{processName} Updater");
+
 				Console.Write($"Waiting for {processName} to terminate");
 				while (true)
 				{
@@ -36,9 +41,8 @@ namespace UpdateExtractor
 
 				Console.WriteLine(" done.");
 
-				string? destDir = Path.GetDirectoryName(targetPath) + "/";
 				string? currentExePath = System.AppContext.BaseDirectory;
-				string? sourceDir = Path.GetDirectoryName(currentExePath) + "/../";
+				string? sourceDir = Path.GetDirectoryName(currentExePath);
 
 				if (string.IsNullOrEmpty(currentExePath))
 					throw new Exception("Unable to determine current process path");
@@ -49,11 +53,28 @@ namespace UpdateExtractor
 				if (string.IsNullOrEmpty(destDir))
 					throw new Exception("Unable to determine destination directory");
 
-				if (!File.Exists(destDir + "Anamnesis.exe"))
-					throw new Exception($"No Anamnesis executable found in destination directory: {destDir}");
+				// Is destDir actually a file path, get a directory instead.
+				if (File.Exists(destDir))
+				{
+					destDir = Path.GetDirectoryName(destDir);
+
+					if (string.IsNullOrEmpty(destDir))
+					{
+						throw new Exception("Unable to determine destination directory");
+					}
+				}
+
+				destDir = destDir.Replace('/', '\\');
+				destDir = destDir.Trim('\\');
+
+				string oldExe = destDir + "\\Anamnesis.exe";
+
+				if (!File.Exists(oldExe))
+					throw new Exception($"No Anamnesis executable found at: {oldExe}");
 
 				Console.WriteLine("Cleaning old version");
 				DeleteFileIfExists(destDir + "Anamnesis.exe");
+				DeleteFileIfExists(destDir + "AnamnesisLauncher.exe");
 				DeleteFileIfExists(destDir + "Anamnesis.pdb");
 				DeleteFileIfExists(destDir + "Anamnesis.xml");
 				DeleteFileIfExists(destDir + "Version.txt");
@@ -61,6 +82,7 @@ namespace UpdateExtractor
 				DeleteDirectoryIfExists(destDir + "Data");
 				DeleteDirectoryIfExists(destDir + "Languages");
 				DeleteDirectoryIfExists(destDir + "Updater");
+				DeleteDirectoryIfExists(destDir + "bin");
 
 				Console.WriteLine("Copying Update Files");
 
@@ -78,8 +100,10 @@ namespace UpdateExtractor
 				}
 
 				Console.WriteLine("Restarting application");
-				Console.WriteLine("    > " + targetPath);
-				ProcessStartInfo start = new ProcessStartInfo(targetPath);
+
+				string launch = destDir + "\\Anamnesis.exe";
+				Console.WriteLine("    > " + launch);
+				ProcessStartInfo start = new ProcessStartInfo(launch);
 				Process.Start(start);
 			}
 			catch (Exception ex)
@@ -88,7 +112,7 @@ namespace UpdateExtractor
 				Console.WriteLine($"Failed to update {processName}");
 				Console.WriteLine(ex.Message);
 				Console.WriteLine();
-				Console.WriteLine("Please try again or download the update manually.");
+				Console.WriteLine("Please download the update manually.");
 				Console.WriteLine();
 				Console.WriteLine("Press any key to close this window.");
 				Console.ReadKey();

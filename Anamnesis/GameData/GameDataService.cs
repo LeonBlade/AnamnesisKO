@@ -5,6 +5,7 @@
 namespace Anamnesis.Services
 {
 	using System;
+	using System.Collections.Generic;
 	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis.Character;
@@ -12,6 +13,8 @@ namespace Anamnesis.Services
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Memory;
+	using Anamnesis.Serialization;
+	using Anamnesis.Serialization.Converters;
 	using Anamnesis.Updater;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
@@ -26,6 +29,7 @@ namespace Anamnesis.Services
 		public static ISheet<IRace> Races { get; protected set; }
 		public static ISheet<ITribe> Tribes { get; protected set; }
 		public static ISheet<IItem> Items { get; protected set; }
+		public static ISheet<IItem> Perform { get; protected set; }
 		public static ISheet<IDye> Dyes { get; protected set; }
 		public static ISheet<INpcBase> BaseNPCs { get; protected set; }
 		public static ISheet<ITerritoryType> Territories { get; protected set; }
@@ -73,13 +77,21 @@ namespace Anamnesis.Services
 			CharacterMakeCustomize = new CustomizeSheet(this.lumina);
 			CharacterMakeTypes = new LuminaSheet<ICharaMakeType, GameData.Sheets.CharaMakeType, CharaMakeTypeViewModel>(this.lumina);
 			ResidentNPCs = new LuminaSheet<INpcResident, ENpcResident, NpcResidentViewModel>(this.lumina);
+			Perform = new LuminaSheet<IItem, Perform, PerformViewModel>(this.lumina);
+
+			this.lumina.GetExcelSheet<Perform>();
 
 			// no view models for these
-			WeatherRates = this.lumina.GetExcelSheet<WeatherRate>();
+			ExcelSheet<WeatherRate>? sheet = this.lumina.GetExcelSheet<WeatherRate>();
+
+			if (sheet == null)
+				throw new Exception("No weather sheet");
+
+			WeatherRates = sheet;
 
 			// these are json files that we write by hand
 			Monsters = new JsonListSheet<Monster>("Data/Monsters.json");
-			Props = new JsonDictionarySheet<Prop>("Data/Props.json");
+			Props = new PropSheet("Data/Props.json");
 
 			return base.Initialize();
 		}

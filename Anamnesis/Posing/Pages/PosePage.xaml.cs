@@ -45,11 +45,13 @@ namespace Anamnesis.PoseModule.Pages
 			this.ContentArea.DataContext = this;
 		}
 
+		public SettingsService SettingsService => SettingsService.Instance;
 		public GposeService GposeService => GposeService.Instance;
-		public PoseService PoseService { get => PoseService.Instance; }
-		public TargetService TargetService { get => TargetService.Instance; }
+		public PoseService PoseService => PoseService.Instance;
+		public TargetService TargetService => TargetService.Instance;
 
 		public bool IsFlipping { get; private set; }
+		public ActorViewModel? Actor { get; private set; }
 		public SkeletonVisual3d? Skeleton { get; private set; }
 		public PoseFile.Configuration FileConfiguration => FileConfig;
 
@@ -144,9 +146,9 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 		{
-			ActorViewModel? actor = this.DataContext as ActorViewModel;
+			this.Actor = this.DataContext as ActorViewModel;
 
-			if (actor == null)
+			if (this.Actor == null || this.Actor.ModelObject == null)
 			{
 				this.Skeleton = null;
 				return;
@@ -157,7 +159,7 @@ namespace Anamnesis.PoseModule.Pages
 
 			try
 			{
-				this.Skeleton = await PoseService.GetVisual(actor);
+				this.Skeleton = await PoseService.GetVisual(this.Actor);
 
 				this.ThreeDView.DataContext = this.Skeleton;
 				this.GuiView.DataContext = this.Skeleton;
@@ -184,11 +186,28 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnOpenClicked(object sender, RoutedEventArgs e)
 		{
+			await this.Open(false);
+		}
+
+		private async void OnOpenSelectedClicked(object sender, RoutedEventArgs e)
+		{
+			await this.Open(true);
+		}
+
+		private async void OnOpenExpressionClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.Skeleton == null)
+				return;
+
+			this.Skeleton.SelectHead();
+			await this.Open(true);
+		}
+
+		private async Task Open(bool selectionOnly)
+		{
 			try
 			{
-				ActorViewModel? actor = this.DataContext as ActorViewModel;
-
-				if (actor == null || this.Skeleton == null)
+				if (this.Actor == null || this.Skeleton == null)
 					return;
 
 				OpenResult result = await FileService.Open<PoseFile, LegacyPoseFile>();
@@ -197,11 +216,11 @@ namespace Anamnesis.PoseModule.Pages
 					return;
 
 				if (result.File is LegacyPoseFile legacyFile)
-					result.File = legacyFile.Upgrade(actor.Customize?.Race ?? Appearance.Races.Hyur);
+					result.File = legacyFile.Upgrade(this.Actor.Customize?.Race ?? Appearance.Races.Hyur);
 
 				if (result.File is PoseFile poseFile)
 				{
-					await poseFile.Apply(actor, this.Skeleton, FileConfig);
+					await poseFile.Apply(this.Actor, this.Skeleton, FileConfig, selectionOnly);
 				}
 			}
 			catch (Exception ex)
@@ -212,8 +231,12 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			ActorViewModel? actor = this.DataContext as ActorViewModel;
-			await PoseFile.Save(actor, this.Skeleton, FileConfig);
+			await PoseFile.Save(this.Actor, this.Skeleton, FileConfig, false);
+		}
+
+		private async void OnSaveSelectedClicked(object sender, RoutedEventArgs e)
+		{
+			await PoseFile.Save(this.Actor, this.Skeleton, FileConfig, true);
 		}
 
 		private void OnViewChanged(object sender, SelectionChangedEventArgs e)
@@ -292,7 +315,7 @@ namespace Anamnesis.PoseModule.Pages
 			}
 		}
 
-		private void OnCanvasMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+		private void OnCanvasMouseMove(object sender, MouseEventArgs e)
 		{
 			if (this.Skeleton == null)
 				return;
@@ -320,6 +343,8 @@ namespace Anamnesis.PoseModule.Pages
 				this.DragSelectionBorder.Width = maxx - minx;
 				this.DragSelectionBorder.Height = maxy - miny;
 
+				List<BoneView> bones = new List<BoneView>();
+
 				foreach (BoneView bone in BoneView.All)
 				{
 					if (bone.Bone == null)
@@ -328,16 +353,21 @@ namespace Anamnesis.PoseModule.Pages
 					if (!bone.IsDescendantOf(this.MouseCanvas))
 						continue;
 
+					if (!bone.IsVisible)
+						continue;
+
 					Point relativePoint = bone.TransformToAncestor(this.MouseCanvas).Transform(new Point(0, 0));
 					if (relativePoint.X > minx && relativePoint.X < maxx && relativePoint.Y > miny && relativePoint.Y < maxy)
 					{
-						this.Skeleton.Hover(bone.Bone, true);
+						this.Skeleton.Hover(bone.Bone, true, false);
 					}
 					else
 					{
 						this.Skeleton.Hover(bone.Bone, false);
 					}
 				}
+
+				this.Skeleton.NotifyHover();
 			}
 			else if (this.isLeftMouseButtonDownOnWindow)
 			{

@@ -54,7 +54,10 @@ namespace Anamnesis.Updater
 				Log.Information("Last update check was less than 6 hours ago. Skipping.");
 				return;
 			}
+		}
 
+		public async Task<bool> CheckForUpdates()
+		{
 			if (Directory.Exists(UpdateTempDir))
 				Directory.Delete(UpdateTempDir, true);
 
@@ -76,7 +79,9 @@ namespace Anamnesis.Updater
 				DateTimeOffset published = (DateTimeOffset)this.currentRelease.Published;
 				published = published.ToUniversalTime();
 
-				if (this.currentRelease.Published != null && published > Version)
+				bool update = this.currentRelease.Published != null && published > Version;
+
+				if (update)
 				{
 					await Dispatch.MainThread();
 
@@ -87,6 +92,7 @@ namespace Anamnesis.Updater
 
 				SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
 				SettingsService.Save();
+				return update;
 			}
 			catch (HttpRequestException ex)
 			{
@@ -95,7 +101,7 @@ namespace Anamnesis.Updater
 				{
 					SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
 					SettingsService.Save();
-					return;
+					return false;
 				}
 
 				throw;
@@ -103,7 +109,7 @@ namespace Anamnesis.Updater
 			catch (Exception ex)
 			{
 				Log.Error(ex, "Failed to complete update check");
-				throw;
+				return false;
 			}
 		}
 
@@ -172,10 +178,6 @@ namespace Anamnesis.Updater
 				// While testing, do not copy the update files over our working files.
 				if (Debugger.IsAttached)
 				{
-					string? sourceDir = Path.GetDirectoryName(currentExePath);
-					if (string.IsNullOrEmpty(sourceDir))
-						throw new Exception("Unable to determine source directory");
-
 					Directory.Delete(UpdateTempDir, true);
 					string[] paths = Directory.GetFiles(".", "*.*", SearchOption.AllDirectories);
 					foreach (string path in paths)
@@ -191,8 +193,9 @@ namespace Anamnesis.Updater
 				}
 
 				// Start the update extractor
+				string currentDir = Directory.GetCurrentDirectory();
 				string procName = Process.GetCurrentProcess().ProcessName;
-				ProcessStartInfo start = new ProcessStartInfo(UpdateTempDir + "/Updater/UpdateExtractor.exe", $"\"{currentExePath}\" {procName}");
+				ProcessStartInfo start = new ProcessStartInfo(UpdateTempDir + "/Updater/UpdateExtractor.exe", $"\"{currentDir}\" {procName}");
 				Process.Start(start);
 
 				// Shutdown anamnesis

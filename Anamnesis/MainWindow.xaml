@@ -23,10 +23,11 @@
 	MouseLeave="Window_MouseLeave"
 	ResizeMode="CanMinimize"
 	SizeToContent="WidthAndHeight"
-	TextBlock.FontSize="12"
 	TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 	Topmost="{Binding SettingsService.Settings.AlwaysOnTop}"
 	WindowStyle="None"
+	TextBlock.FontSize="12"
+	Style="{StaticResource AnaWindowStyle}"
 	mc:Ignorable="d">
 
 	<FrameworkElement.CommandBindings>
@@ -303,6 +304,12 @@
 							Opacity="0.5"
 							Text="Anamnesis" />
 
+						<!--<TextBlock
+							Margin="2,0,3,0"
+							VerticalAlignment="Center"
+							Opacity="0.5"
+							Text="{Binding UpdateService.Version}" />-->
+
 						<TextBlock
 							Margin="12,0,3,0"
 							VerticalAlignment="Center"
@@ -351,17 +358,7 @@
 								IsChecked="{Binding LogService.VerboseLogging}"
 								Style="{DynamicResource TransparentIconToggleButton}"
 								ToolTip="Enable verbose logging">
-								<fa:IconBlock FontSize="12" Icon="FileAlt" />
-							</ToggleButton>
-
-							<ToggleButton
-								Width="28"
-								Margin="3,0,0,0"
-								BorderThickness="0"
-								IsChecked="{Binding MemoryService.EnableProcess}"
-								Style="{DynamicResource TransparentIconToggleButton}"
-								ToolTip="Enable process">
-								<fa:IconBlock FontSize="12" Icon="Microchip" />
+								<ana:IconBlock FontSize="12" Icon="FileAlt" />
 							</ToggleButton>
 						</StackPanel>
 
@@ -376,7 +373,7 @@
 								<ana:TextBlock Key="Settings_AlwaysOnTop" />
 							</ToggleButton.ToolTip>
 
-							<fa:IconBlock FontSize="12" Icon="ThumbTack" />
+							<ana:IconBlock FontSize="12" Icon="ThumbTack" />
 						</ToggleButton>
 
 						<Button

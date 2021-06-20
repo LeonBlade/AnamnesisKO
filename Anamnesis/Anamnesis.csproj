@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
@@ -9,13 +9,16 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<RootNamespace>Anamnesis</RootNamespace>
 		<ApplicationIcon>Assets\Concept Matrix.ico</ApplicationIcon>
-		<OutputPath>..\bin\</OutputPath>
-		<DocumentationFile>..\obj\Anamnesis.xml</DocumentationFile>
+		<OutputPath>.\bin\</OutputPath>
+		<DocumentationFile>.\obj\Anamnesis.xml</DocumentationFile>
 		<NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;IDE0025;SA1011;SA1134;</NoWarn>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<Nullable>enable</Nullable>
 		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
 		<TrimMode>CopyUsed</TrimMode>
+		<AssemblyVersion>1.0.1.0</AssemblyVersion>
+		<Version>1.0.1.0</Version>
+		<FileVersion>1.0.1.0</FileVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -71,6 +74,10 @@
 		<None Remove="Assets\colors.dat" />
 		<None Remove="Assets\Concept Matrix.ico" />
 		<None Remove="Assets\Concept Matrix.png" />
+		<None Remove="Assets\Fonts\OpenDyslexic-Bold.otf" />
+		<None Remove="Assets\Fonts\OpenDyslexic-BoldItalic.otf" />
+		<None Remove="Assets\Fonts\OpenDyslexic-Italic.otf" />
+		<None Remove="Assets\Fonts\OpenDyslexic-Regular.otf" />
 		<None Remove="Assets\G2P.png" />
 		<None Remove="Assets\Hydaelyn.png" />
 		<None Remove="Assets\IconBorder.png" />
@@ -123,7 +130,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="FontAwesome.Sharp" Version="5.15.3" />
+		<PackageReference Include="FontAwesome.Sharp" Version="5.15.1" />
 		<PackageReference Include="Lumina" Version="3.3.0" />
 		<PackageReference Include="Lumina.Excel" Version="5.50.0" />
 		<PackageReference Include="Markdig.Wpf.Signed" Version="0.4.0" />
@@ -189,6 +196,18 @@
 		<Resource Include="Assets\colors.dat" />
 		<Resource Include="Assets\Concept Matrix.ico" />
 		<Resource Include="Assets\Concept Matrix.png" />
+		<Resource Include="Assets\Fonts\OpenDyslexic-Bold.otf">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Assets\Fonts\OpenDyslexic-BoldItalic.otf">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Assets\Fonts\OpenDyslexic-Italic.otf">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Assets\Fonts\OpenDyslexic-Regular.otf">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
 		<Resource Include="Assets\Hydaelyn.png" />
 		<Resource Include="Assets\IconBorder.png" />
 		<Resource Include="Assets\IconBorderSmall.png" />
@@ -284,9 +303,6 @@
 		<None Update="Languages\*.*">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="Version.txt">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -335,6 +351,7 @@
 
 	<ItemGroup>
 		<Folder Include="Core\Localization\" />
+		<Folder Include="Properties\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -344,4 +361,22 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="Download DotNET Desktop Runtime.URL">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Version.txt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 </Project>
+
+
+
+
+
+
+
+
+

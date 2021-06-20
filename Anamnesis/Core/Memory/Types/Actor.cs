@@ -161,6 +161,9 @@ namespace Anamnesis.Memory
 
 		public void OnRetargeted()
 		{
+			if (this.ModelObject == null && this.model.ModelObject != IntPtr.Zero)
+				Log.Warning($"Actor has no model object: {this.model.ModelObject}");
+
 			if (this.Customize == null)
 				return;
 
@@ -173,6 +176,13 @@ namespace Anamnesis.Memory
 				{
 					this.wasPlayerBeforeGPose = this.Pointer;
 					this.SetObjectKindDirect(ActorTypes.BattleNpc, this.Pointer);
+
+					// Sanity check that we do get turned back into a player
+					Task.Run(async () =>
+					{
+						await Task.Delay(3000);
+						this.SetObjectKindDirect(ActorTypes.Player, this.wasPlayerBeforeGPose);
+					});
 				}
 			}
 			else if (gpose.IsGpose && !gpose.IsChangingState)
@@ -260,8 +270,6 @@ namespace Anamnesis.Memory
 
 		public async Task ConvertToPlayer()
 		{
-			this.Nickname = this.Name + " (" + this.ObjectKind + ")";
-
 			if (this.ObjectKind == ActorTypes.EventNpc)
 			{
 				this.ObjectKind = ActorTypes.Player;

@@ -207,7 +207,7 @@ namespace Anamnesis.PoseModule
 			});
 		}
 
-		public void Hover(BoneVisual3d bone, bool hover)
+		public void Hover(BoneVisual3d bone, bool hover, bool notify = true)
 		{
 			if (this.HoverBones.Contains(bone) && !hover)
 			{
@@ -222,6 +222,14 @@ namespace Anamnesis.PoseModule
 				return;
 			}
 
+			if (notify)
+			{
+				this.NotifyHover();
+			}
+		}
+
+		public void NotifyHover()
+		{
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasHover)));
 		}
 
@@ -309,6 +317,58 @@ namespace Anamnesis.PoseModule
 			////Log.Information($"Optional bone not found: {name}");
 
 			return null;
+		}
+
+		/// <summary>
+		/// Returns true if the entire selection is head + face bones only.
+		/// Hacky special check for the loading of expresisons (#365).
+		/// </summary>
+		public bool GetIsHeadSelection()
+		{
+			BoneVisual3d? head = this.GetBone("Head");
+
+			if (head == null || !this.GetIsBoneSelected(head))
+				return false;
+
+			foreach (BoneVisual3d? bone in this.SelectedBones)
+			{
+				if (bone == head)
+					continue;
+
+				if (bone.HasParent(head))
+					continue;
+
+				return false;
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Returns true if the entire selection is head + face bones only.
+		/// Hacky special check for the loading of expresisons (#365).
+		/// </summary>
+		public void SelectHead()
+		{
+			this.ClearSelection();
+
+			BoneVisual3d? headBone = this.GetBone("Head");
+			if (headBone == null)
+				return;
+
+			List<BoneVisual3d> headBones = new List<BoneVisual3d>();
+
+			headBones.Add(headBone);
+
+			foreach (BoneVisual3d bone in this.Bones)
+			{
+				if (bone.OriginalBoneName.StartsWith("Head_"))
+				{
+					headBones.Add(bone);
+				}
+			}
+
+			this.Select(headBones, SkeletonVisual3d.SelectMode.Add);
 		}
 
 		public void Reselect()

@@ -5,8 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Anamnesis.Views"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="800"
-			 IsVisibleChanged="UserControl_IsVisibleChanged">
+			 d:DesignHeight="450" d:DesignWidth="800">
 
 	<UserControl.Resources>
 		<Storyboard x:Key="StoryboardImage1" Duration="00:00:2">
@@ -23,7 +22,7 @@
 
 		<Border BorderBrush="White" MinHeight="256" MinWidth="256" BorderThickness="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" Background="White" x:Name="Image1Host" Opacity="0"  Visibility="{Binding Image1Path, Converter={StaticResource NotNullToVisibilityConverter}}">
 			<Border.Effect>
-				<DropShadowEffect ShadowDepth="0" BlurRadius="15" Opacity="1"/>
+				<DropShadowEffect ShadowDepth="0" BlurRadius="15" Opacity="0.5"/>
 			</Border.Effect>
 
 			<Border.RenderTransform>
@@ -40,7 +39,7 @@
 
 		<Border BorderBrush="White" BorderThickness="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" Background="White" x:Name="Image2Host" Opacity="0" Visibility="{Binding Image2Path, Converter={StaticResource NotNullToVisibilityConverter}}">
 			<Border.Effect>
-				<DropShadowEffect ShadowDepth="0" BlurRadius="15" Opacity="1"/>
+				<DropShadowEffect ShadowDepth="0" BlurRadius="15" Opacity="0.5"/>
 			</Border.Effect>
 
 			<Border.RenderTransform>

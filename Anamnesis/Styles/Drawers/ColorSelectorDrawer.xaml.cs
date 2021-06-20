@@ -74,6 +74,15 @@ namespace Anamnesis.Styles.Drawers
 			{
 				this.List.Items.Add(c);
 			}
+
+			if (FavoritesService.Colors != null)
+			{
+				foreach (Color4 color in FavoritesService.Colors)
+				{
+					ColorOption op = new ColorOption(color, string.Empty);
+					this.RecentList.Items.Add(op);
+				}
+			}
 		}
 
 		public delegate void ValueChangedEventHandler(Color4 value);
@@ -147,6 +156,29 @@ namespace Anamnesis.Styles.Drawers
 		{
 			get => EnableAlphaDp.Get(this);
 			set => EnableAlphaDp.Set(this, value);
+		}
+
+		public void OnClosed()
+		{
+			if (FavoritesService.Colors != null)
+			{
+				foreach (Color4 color in FavoritesService.Colors)
+				{
+					if (color.IsApproximately(this.Value))
+					{
+						return;
+					}
+				}
+
+				FavoritesService.Colors.Insert(0, this.Value);
+
+				while (FavoritesService.Colors.Count > 12)
+				{
+					FavoritesService.Colors.RemoveAt(12);
+				}
+
+				FavoritesService.Save();
+			}
 		}
 
 		private static void OnValueChanged(ColorSelectorDrawer sender, Color4 value)
@@ -246,12 +278,24 @@ namespace Anamnesis.Styles.Drawers
 
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			ColorOption? op = this.List.SelectedItem as ColorOption;
+			if (sender is ListBox list)
+			{
+				ColorOption? op = list.SelectedItem as ColorOption;
 
-			if (op == null)
-				return;
+				if (op == null)
+					return;
 
-			this.Value = op.AsColor();
+				this.Value = op.AsColor();
+
+				if (list == this.List)
+				{
+					this.RecentList.SelectedItem = null;
+				}
+				else if (list == this.RecentList)
+				{
+					this.List.SelectedItem = null;
+				}
+			}
 		}
 
 		private class ColorOption
@@ -262,12 +306,24 @@ namespace Anamnesis.Styles.Drawers
 				this.Color = c;
 			}
 
+			public ColorOption(Color4 c, string name)
+			{
+				this.Name = name;
+
+				WpfColor color = default(WpfColor);
+				color.ScR = c.R;
+				color.ScG = c.G;
+				color.ScB = c.B;
+				color.ScA = c.A;
+				this.Color = color;
+			}
+
 			public WpfColor Color { get; set; }
 			public string Name { get; set; }
 
 			public Color4 AsColor()
 			{
-				return new Color4(this.Color.R / 255.0f, this.Color.G / 255.0f, this.Color.B / 255.0f, this.Color.A / 255.0f);
+				return new Color4(this.Color.ScR, this.Color.ScG, this.Color.ScB, this.Color.ScA);
 			}
 		}
 	}

@@ -30,7 +30,7 @@ namespace Anamnesis.Scenes
 
 	public class SceneFile : FileBase
 	{
-		public int TerritoryId { get; set; }
+		public uint TerritoryId { get; set; }
 		public string? TerritoryName { get; set; }
 
 		public Vector RootPosition { get; set; }
@@ -273,7 +273,7 @@ namespace Anamnesis.Scenes
 				}
 
 				this.Pose = new PoseFile();
-				this.Pose.WriteToFile(actor, skeleton, config.Pose);
+				this.Pose.WriteToFile(actor, skeleton, config.Pose, false);
 
 				this.Character = new CharacterFile();
 				this.Character.WriteToFile(actor, config.Character);

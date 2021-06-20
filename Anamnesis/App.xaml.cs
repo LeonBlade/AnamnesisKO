@@ -28,11 +28,6 @@ namespace Anamnesis
 	{
 		private static readonly ServiceManager Services = new ServiceManager();
 
-		public App()
-		{
-			AssemblyLoadContext.Default.Resolving += this.ResolveAssembly;
-		}
-
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
@@ -89,6 +84,8 @@ namespace Anamnesis
 
 			try
 			{
+				_ = Task.Run(this.PerformanceWatcher);
+
 				LogService.CreateLog();
 
 				this.CheckWorkingDirectory();
@@ -138,6 +135,11 @@ namespace Anamnesis
 				Directory.SetCurrentDirectory(currentDir);
 				Log.Information($"Set Working Directory: \"{currentDir}\"");
 			}
+
+			if (currentDir.Contains("\\AppData\\Local\\Temp\\"))
+			{
+				throw new Exception("Attempt to run from temporary directory. (Are you running Anamneis from a zip file?)");
+			}
 		}
 
 		private void CheckForProcesses()
@@ -154,16 +156,24 @@ namespace Anamnesis
 			}
 		}
 
-		private Assembly? ResolveAssembly(AssemblyLoadContext context, AssemblyName name)
+		private async Task PerformanceWatcher()
 		{
-			if (name.Name == null)
-				return null;
+			Stopwatch sw = new Stopwatch();
+			while (this._contentLoaded)
+			{
+				await Task.Delay(500);
 
-			string path = AppContext.BaseDirectory + "/bin/" + name.Name + ".dll";
-			if (File.Exists(path))
-				return context.LoadFromAssemblyPath(path);
+				sw.Restart();
+				await Dispatch.MainThread();
+				await Task.Delay(16);
+				await Dispatch.MainThread();
+				long ms = sw.ElapsedMilliseconds;
 
-			return null;
+				if (ms > 50)
+				{
+					Log.Warning($"UI thread took {ms}ms to tick");
+				}
+			}
 		}
 	}
 }
