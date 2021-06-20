@@ -10,7 +10,6 @@ namespace Anamnesis.GameData.ViewModels
 	using Anamnesis.TexTools;
 	using Lumina;
 	using Lumina.Excel;
-	using Lumina.Excel.GeneratedSheets;
 
 	public class ItemViewModel : ExcelRowViewModel<Sheets.Item>, IItem
 	{
@@ -23,7 +22,7 @@ namespace Anamnesis.GameData.ViewModels
 		private ushort subModelVariant;
 
 		private Sheets.ClassJobCategory? classJob;
-    public ItemViewModel(uint key, ExcelSheet<Item> sheet, GameData lumina)
+		public ItemViewModel(uint key, ExcelSheet<Sheets.Item> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 			this.classJob = this.Value.ClassJobCategory!.Value;
@@ -58,7 +57,7 @@ namespace Anamnesis.GameData.ViewModels
 
 		public bool FitsInSlot(ItemSlots slot)
 		{
-			return this.Value.EquipSlotCategory.Value?.Contains(slot) ?? false;
+			return this.Value?.EquipSlotCategory?.Value?.Contains(slot) ?? false;
 		}
 	}
 }
