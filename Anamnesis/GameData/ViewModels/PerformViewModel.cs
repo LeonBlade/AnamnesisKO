@@ -4,21 +4,19 @@
 
 namespace Anamnesis.GameData.ViewModels
 {
-	using System;
 	using System.Windows.Media;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 	using Lumina;
 	using Lumina.Excel;
-	using Lumina.Excel.GeneratedSheets;
 
-	public class PerformViewModel : ExcelRowViewModel<Perform>, IItem
+	public class PerformViewModel : ExcelRowViewModel<Sheets.Perform>, IItem
 	{
 		private ushort modelSet;
 		private ushort modelBase;
 		private ushort modelVariant;
 
-		public PerformViewModel(uint key, ExcelSheet<Perform> sheet, GameData lumina)
+		public PerformViewModel(uint key, ExcelSheet<Sheets.Perform> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 			LuminaExtensions.GetModel(this.Value.ModelKey, true, out this.modelSet, out this.modelBase, out this.modelVariant);
@@ -26,7 +24,7 @@ namespace Anamnesis.GameData.ViewModels
 			this.Mod = TexToolsService.GetMod(this);
 		}
 
-		public override string Name => this.Value.Instrument;
+		public override string Name => this.Value.Instrument!;
 
 		ImageSource? IItem.Icon => null;
 		ushort IItem.ModelSet => this.modelSet;

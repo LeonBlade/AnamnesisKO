@@ -77,9 +77,9 @@ namespace Anamnesis.Services
 			CharacterMakeCustomize = new CustomizeSheet(this.lumina);
 			CharacterMakeTypes = new LuminaSheet<ICharaMakeType, GameData.Sheets.CharaMakeType, CharaMakeTypeViewModel>(this.lumina);
 			ResidentNPCs = new LuminaSheet<INpcResident, ENpcResident, NpcResidentViewModel>(this.lumina);
-			Perform = new LuminaSheet<IItem, Perform, PerformViewModel>(this.lumina);
+			Perform = new LuminaSheet<IItem, GameData.Sheets.Perform, PerformViewModel>(this.lumina);
 
-			this.lumina.GetExcelSheet<Perform>();
+			this.lumina.GetExcelSheet<GameData.Sheets.Perform>();
 
 			// no view models for these
 			ExcelSheet<WeatherRate>? sheet = this.lumina.GetExcelSheet<WeatherRate>();
