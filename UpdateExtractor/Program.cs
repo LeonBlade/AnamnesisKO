@@ -41,11 +41,7 @@ namespace UpdateExtractor
 
 				Console.WriteLine(" done.");
 
-				string? currentExePath = System.AppContext.BaseDirectory;
-				string? sourceDir = Path.GetDirectoryName(currentExePath);
-
-				if (string.IsNullOrEmpty(currentExePath))
-					throw new Exception("Unable to determine current process path");
+				string? sourceDir = Path.Combine(Path.GetTempPath(), "AnamnesisUpdateLatest");
 
 				if (string.IsNullOrEmpty(sourceDir))
 					throw new Exception("Unable to determine source directory");
@@ -73,16 +69,16 @@ namespace UpdateExtractor
 					throw new Exception($"No Anamnesis executable found at: {oldExe}");
 
 				Console.WriteLine("Cleaning old version");
-				DeleteFileIfExists(destDir + "Anamnesis.exe");
-				DeleteFileIfExists(destDir + "AnamnesisLauncher.exe");
-				DeleteFileIfExists(destDir + "Anamnesis.pdb");
-				DeleteFileIfExists(destDir + "Anamnesis.xml");
-				DeleteFileIfExists(destDir + "Version.txt");
+				DeleteFileIfExists(Path.Combine(destDir, "Anamnesis.exe"));
+				DeleteFileIfExists(Path.Combine(destDir, "AnamnesisLauncher.exe"));
+				DeleteFileIfExists(Path.Combine(destDir, "Anamnesis.pdb"));
+				DeleteFileIfExists(Path.Combine(destDir, "Anamnesis.xml"));
+				DeleteFileIfExists(Path.Combine(destDir, "Version.txt"));
 
-				DeleteDirectoryIfExists(destDir + "Data");
-				DeleteDirectoryIfExists(destDir + "Languages");
-				DeleteDirectoryIfExists(destDir + "Updater");
-				DeleteDirectoryIfExists(destDir + "bin");
+				DeleteDirectoryIfExists(Path.Combine(destDir, "Data"));
+				DeleteDirectoryIfExists(Path.Combine(destDir, "Languages"));
+				DeleteDirectoryIfExists(Path.Combine(destDir, "Updater"));
+				DeleteDirectoryIfExists(Path.Combine(destDir, "bin"));
 
 				Console.WriteLine("Copying Update Files");
 
