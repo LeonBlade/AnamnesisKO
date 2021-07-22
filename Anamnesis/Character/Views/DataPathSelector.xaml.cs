@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Character.Views
@@ -8,8 +7,8 @@ namespace Anamnesis.Character.Views
 	using System.Collections.ObjectModel;
 	using System.Windows.Controls;
 	using Anamnesis.Memory;
-	using Anamnesis.Styles.DependencyProperties;
 	using PropertyChanged;
+	using XivToolsWpf.DependencyProperties;
 
 	/// <summary>
 	/// Interaction logic for DataPathSelector.xaml.
@@ -19,7 +18,7 @@ namespace Anamnesis.Character.Views
 	{
 		public static readonly IBind<short> DataPathDp = Binder.Register<short, DataPathSelector>(nameof(DataPath), OnPathChange);
 		public static readonly IBind<byte> DataHeadDp = Binder.Register<byte, DataPathSelector>(nameof(DataHead), OnHeadChanged);
-		public static readonly IBind<Appearance.Tribes> TribeDp = Binder.Register<Appearance.Tribes, DataPathSelector>(nameof(Tribe), OnTribeChanged);
+		public static readonly IBind<Customize.Tribes> TribeDp = Binder.Register<Customize.Tribes, DataPathSelector>(nameof(Tribe), OnTribeChanged);
 
 		private DataPathOption? selectedPath;
 		private bool supressEvents = false;
@@ -72,7 +71,7 @@ namespace Anamnesis.Character.Views
 			set => DataHeadDp.Set(this, value);
 		}
 
-		public Appearance.Tribes Tribe
+		public Customize.Tribes Tribe
 		{
 			get => TribeDp.Get(this);
 			set => TribeDp.Set(this, value);
@@ -102,7 +101,7 @@ namespace Anamnesis.Character.Views
 			sender.SelectedPath = sender.GetOption(sender.DataPath);
 		}
 
-		private static void OnTribeChanged(DataPathSelector sender, Appearance.Tribes value)
+		private static void OnTribeChanged(DataPathSelector sender, Customize.Tribes value)
 		{
 			sender.SelectedPath = sender.GetOption(sender.DataPath);
 		}
@@ -143,7 +142,7 @@ namespace Anamnesis.Character.Views
 			public short PathValue { get; private set; }
 			public string Name { get; private set; }
 
-			public byte GetHead(Appearance.Tribes tribe)
+			public byte GetHead(Customize.Tribes tribe)
 			{
 				// 1, 3, 5, 7, 9, 11, 13, 15
 				if ((int)tribe % 2 != 0)

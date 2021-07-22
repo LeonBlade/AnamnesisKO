@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory
@@ -44,8 +43,8 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x0F08)] public Weapon MainHand;
 		[FieldOffset(0x0F70)] public Weapon OffHand;
 		[FieldOffset(0x1040)] public Equipment Equipment;
-		[FieldOffset(TransparencyOffset)] public float Transparency;
-		[FieldOffset(0x1878)] public Appearance Customize;
+		[FieldOffset(0x182C)] public float Transparency;
+		[FieldOffset(0x1898)] public Customize Customize;
 
 		public string Name
 		{
@@ -79,7 +78,7 @@ namespace Anamnesis.Memory
 	{
 		private const short RefreshDelay = 250;
 
-		private static Dictionary<string, string> nicknameLookup = new Dictionary<string, string>();
+		private static readonly Dictionary<string, string> NicknameLookup = new Dictionary<string, string>();
 
 		private short refreshDelay;
 		private Task? refreshTask;
@@ -94,9 +93,10 @@ namespace Anamnesis.Memory
 		[ModelField] public int DataId { get; set; }
 		[ModelField] [Refresh] public ActorTypes ObjectKind { get; set; }
 		[ModelField] public byte SubKind { get; set; }
-		[ModelField] [Refresh] public AppearanceViewModel? Customize { get; set; }
-		[ModelField] [Refresh] public int ModelType { get; set; }
-		[ModelField] [Refresh] public RenderModes RenderMode { get; set; }
+		[ModelField][Refresh] public CustomizeViewModel? Customize { get; set; }
+		[ModelField][Refresh] public int ModelType { get; set; }
+		[ModelField] public bool IsAnimating { get; set; }
+		[ModelField][Refresh] public RenderModes RenderMode { get; set; }
 		[ModelField] public float Transparency { get; set; }
 		[ModelField] [Refresh] public EquipmentViewModel? Equipment { get; set; }
 		[ModelField] [Refresh] public WeaponViewModel? MainHand { get; set; }
@@ -114,8 +114,8 @@ namespace Anamnesis.Memory
 		{
 			get
 			{
-				if (nicknameLookup.ContainsKey(this.Id))
-					return nicknameLookup[this.Id];
+				if (NicknameLookup.ContainsKey(this.Id))
+					return NicknameLookup[this.Id];
 
 				return null;
 			}
@@ -124,17 +124,17 @@ namespace Anamnesis.Memory
 			{
 				if (value == null)
 				{
-					if (nicknameLookup.ContainsKey(this.Id))
+					if (NicknameLookup.ContainsKey(this.Id))
 					{
-						nicknameLookup.Remove(this.Id);
+						NicknameLookup.Remove(this.Id);
 					}
 				}
 				else
 				{
-					if (!nicknameLookup.ContainsKey(this.Id))
-						nicknameLookup.Add(this.Id, string.Empty);
+					if (!NicknameLookup.ContainsKey(this.Id))
+						NicknameLookup.Add(this.Id, string.Empty);
 
-					nicknameLookup[this.Id] = value;
+					NicknameLookup[this.Id] = value;
 				}
 			}
 		}

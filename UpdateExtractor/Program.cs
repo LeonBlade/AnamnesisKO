@@ -1,4 +1,4 @@
-﻿// Concept Matrix 3.
+﻿// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace UpdateExtractor
@@ -43,6 +43,9 @@ namespace UpdateExtractor
 
 				string? sourceDir = Path.Combine(Path.GetTempPath(), "AnamnesisUpdateLatest");
 
+				if (!Directory.Exists(sourceDir))
+					throw new Exception("Unable to determine current process path");
+
 				if (string.IsNullOrEmpty(sourceDir))
 					throw new Exception("Unable to determine source directory");
 
@@ -62,8 +65,9 @@ namespace UpdateExtractor
 
 				destDir = destDir.Replace('/', '\\');
 				destDir = destDir.Trim('\\');
+				destDir += "\\";
 
-				string oldExe = destDir + "\\Anamnesis.exe";
+				string oldExe = destDir + "Anamnesis.exe";
 
 				if (!File.Exists(oldExe))
 					throw new Exception($"No Anamnesis executable found at: {oldExe}");
@@ -97,7 +101,7 @@ namespace UpdateExtractor
 
 				Console.WriteLine("Restarting application");
 
-				string launch = destDir + "\\Anamnesis.exe";
+				string launch = destDir + "Anamnesis.exe";
 				Console.WriteLine("    > " + launch);
 				ProcessStartInfo start = new ProcessStartInfo(launch);
 				Process.Start(start);

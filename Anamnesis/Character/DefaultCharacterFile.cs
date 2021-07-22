@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Character
@@ -13,11 +12,11 @@ namespace Anamnesis.Character
 		{
 			SaveMode = CharacterFile.SaveModes.All,
 
-			Race = Appearance.Races.Hyur,
-			Gender = Appearance.Genders.Feminine,
-			Age = Appearance.Ages.Normal,
+			Race = Customize.Races.Hyur,
+			Gender = Customize.Genders.Feminine,
+			Age = Customize.Ages.Normal,
 			Height = 50,
-			Tribe = Appearance.Tribes.Midlander,
+			Tribe = Customize.Tribes.Midlander,
 			Head = 1,
 			Hair = 1,
 			EnableHighlights = false,
@@ -25,7 +24,7 @@ namespace Anamnesis.Character
 			REyeColor = 79,
 			HairTone = 51,
 			Highlights = 5,
-			FacialFeatures = Appearance.FacialFeature.None,
+			FacialFeatures = Customize.FacialFeature.None,
 			LimbalEyes = 0,
 			Eyebrows = 0,
 			LEyeColor = 79,

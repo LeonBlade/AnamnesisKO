@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.PoseModule.Views
@@ -14,6 +13,8 @@ namespace Anamnesis.PoseModule.Views
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
 	using PropertyChanged;
+	using XivToolsWpf;
+	using Colors = System.Windows.Media.Colors;
 
 	/// <summary>
 	/// Interaction logic for CharacterPoseView.xaml.

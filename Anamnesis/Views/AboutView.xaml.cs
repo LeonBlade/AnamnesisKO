@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GUI.Views
@@ -17,7 +16,7 @@ namespace Anamnesis.GUI.Views
 		{
 			this.InitializeComponent();
 
-			this.VersionLabel.Text = UpdateService.Version.ToString("yyyy-MM-dd HH:mm");
+			this.VersionLabel.Text = VersionInfo.Date.ToString("yyyy-MM-dd HH:mm");
 		}
 
 		private void OnNavigate(object sender, RequestNavigateEventArgs e)

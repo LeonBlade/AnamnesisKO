@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Updater
@@ -15,18 +14,14 @@ namespace Anamnesis.Updater
 	using System.Text.Json.Serialization;
 	using System.Threading.Tasks;
 	using Anamnesis.Services;
+	using XivToolsWpf;
 
 	public class UpdateService : ServiceBase<UpdateService>
 	{
-		public const string VersionFile = "Version.txt";
-
 		private const string Repository = "LeonBlade/AnamnesisKO";
 
-		private HttpClient httpClient = new HttpClient();
+		private readonly HttpClient httpClient = new HttpClient();
 		private Release? currentRelease;
-
-		public static DateTimeOffset Version { get; private set; } = DateTimeOffset.Now;
-		public static string? SupportedGameVersion { get; private set; }
 
 		private static string UpdateTempDir => Path.GetTempPath() + "/AnamnesisUpdateLatest/";
 
@@ -34,19 +29,8 @@ namespace Anamnesis.Updater
 		{
 			await base.Initialize();
 
-			if (!File.Exists(VersionFile))
-				throw new Exception("No version file found");
-
-			string[] parts = File.ReadAllText(VersionFile).Split(';');
-
-			Version = DateTimeOffset.Parse(parts[0].Trim()).ToUniversalTime();
-			SupportedGameVersion = parts[1].Trim();
-
 			// Debug builds should not attempt to update
-#if DEBUG
-			Version = DateTimeOffset.UtcNow;
-#endif
-
+#if !DEBUG
 			DateTimeOffset lastCheck = SettingsService.Current.LastUpdateCheck;
 			TimeSpan elapsed = DateTimeOffset.Now - lastCheck;
 			if (elapsed.TotalHours < 6)
@@ -54,6 +38,7 @@ namespace Anamnesis.Updater
 				Log.Information("Last update check was less than 6 hours ago. Skipping.");
 				return;
 			}
+#endif
 		}
 
 		public async Task<bool> CheckForUpdates()
@@ -79,13 +64,13 @@ namespace Anamnesis.Updater
 				DateTimeOffset published = (DateTimeOffset)this.currentRelease.Published;
 				published = published.ToUniversalTime();
 
-				bool update = this.currentRelease.Published != null && published > Version;
+				bool update = this.currentRelease.Published != null && published > VersionInfo.Date;
 
 				if (update)
 				{
 					await Dispatch.MainThread();
 
-					UpdateDialog dlg = new UpdateDialog();
+					UpdateDialog dlg = new();
 					dlg.Changes = this.currentRelease.Changes;
 					await ViewService.ShowDialog<UpdateDialog, bool?>("Update", dlg);
 				}
@@ -138,7 +123,7 @@ namespace Anamnesis.Updater
 					if (tAsset.Name == null)
 						continue;
 
-					if (!tAsset.Name.EndsWith(".zip"))
+					if (!tAsset.Name.EndsWith(".zip", StringComparison.InvariantCulture))
 						continue;
 
 					asset = tAsset;
@@ -152,7 +137,7 @@ namespace Anamnesis.Updater
 
 				// Download asset to temp file
 				string zipFilePath = Path.GetTempFileName();
-				using WebClient client = new WebClient();
+				using WebClient client = new();
 				if (updateProgress != null)
 				{
 					client.DownloadProgressChanged += (object sender, DownloadProgressChangedEventArgs e) =>
@@ -166,8 +151,8 @@ namespace Anamnesis.Updater
 				if (!Directory.Exists(UpdateTempDir))
 					Directory.CreateDirectory(UpdateTempDir);
 
-				using FileStream zipFile = new FileStream(zipFilePath, FileMode.Open);
-				using ZipArchive archive = new ZipArchive(zipFile, ZipArchiveMode.Read);
+				using FileStream zipFile = new(zipFilePath, FileMode.Open);
+				using ZipArchive archive = new(zipFile, ZipArchiveMode.Read);
 				archive.ExtractToDirectory(UpdateTempDir, true);
 				archive.Dispose();
 				await zipFile.DisposeAsync();
@@ -195,7 +180,7 @@ namespace Anamnesis.Updater
 				// Start the update extractor
 				string currentDir = Directory.GetCurrentDirectory();
 				string procName = Process.GetCurrentProcess().ProcessName;
-				ProcessStartInfo start = new ProcessStartInfo(UpdateTempDir + "/Updater/UpdateExtractor.exe", $"\"{currentDir}\" {procName}");
+				ProcessStartInfo start = new(UpdateTempDir + "/Updater/UpdateExtractor.exe", $"\"{currentDir}\" {procName}");
 				Process.Start(start);
 
 				// Shutdown anamnesis

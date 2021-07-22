@@ -1,11 +1,9 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Services
 {
 	using System;
-	using System.Collections.Generic;
 	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis.Character;
@@ -13,12 +11,9 @@ namespace Anamnesis.Services
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Memory;
-	using Anamnesis.Serialization;
-	using Anamnesis.Serialization.Converters;
 	using Anamnesis.Updater;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
-
 	using LuminaData = global::Lumina.GameData;
 
 	public class GameDataService : ServiceBase<GameDataService>
@@ -37,7 +32,8 @@ namespace Anamnesis.Services
 		public static ICharaMakeCustomizeData CharacterMakeCustomize { get; protected set; }
 		public static ISheet<ICharaMakeType> CharacterMakeTypes { get; protected set; }
 		public static ISheet<INpcResident> ResidentNPCs { get; protected set; }
-		public static ExcelSheet<WeatherRate>? WeatherRates { get; protected set; }
+		public static ExcelSheet<WeatherRate> WeatherRates { get; protected set; }
+		public static ExcelSheet<EquipRaceCategory> EquipRaceCategories { get; protected set; }
 		public static ISheet<Monster> Monsters { get; private set; }
 		public static ISheet<Prop> Props { get; private set; }
 		#pragma warning restore CS8618
@@ -47,9 +43,9 @@ namespace Anamnesis.Services
 			string file = MemoryService.GamePath + "game/ffxivgame.ver";
 			string gameVer = File.ReadAllText(file);
 
-			if (gameVer != UpdateService.SupportedGameVersion)
+			if (gameVer != VersionInfo.ValidatedGameVersion)
 			{
-				Log.Error(LocalizationService.GetStringFormatted("Error_WrongVersion", gameVer));
+				Log.Warning($"Anamnesis has not been validated against this game version: {gameVer}. This may cause problems.");
 			}
 
 			try
@@ -82,12 +78,17 @@ namespace Anamnesis.Services
 			this.lumina.GetExcelSheet<GameData.Sheets.Perform>();
 
 			// no view models for these
-			ExcelSheet<WeatherRate>? sheet = this.lumina.GetExcelSheet<WeatherRate>();
+			static ExcelSheet<T> GetNotNullExcelSheet<T>(LuminaData lumina)
+				where T : ExcelRow
+			{
+				ExcelSheet<T>? sheet = lumina.GetExcelSheet<T>();
+				if (sheet == null)
+					throw new Exception($"Missing sheet {typeof(T).Name}");
+				return sheet;
+			}
 
-			if (sheet == null)
-				throw new Exception("No weather sheet");
-
-			WeatherRates = sheet;
+			WeatherRates = GetNotNullExcelSheet<WeatherRate>(this.lumina);
+			EquipRaceCategories = GetNotNullExcelSheet<EquipRaceCategory>(this.lumina);
 
 			// these are json files that we write by hand
 			Monsters = new JsonListSheet<Monster>("Data/Monsters.json");

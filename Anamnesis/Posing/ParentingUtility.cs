@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Posing
@@ -10,6 +9,7 @@ namespace Anamnesis.Posing
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
 	using Serilog;
+	using XivToolsWpf;
 
 	public static class ParentingUtility
 	{

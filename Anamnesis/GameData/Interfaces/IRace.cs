@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData
@@ -9,7 +8,7 @@ namespace Anamnesis.GameData
 
 	public interface IRace : IRow
 	{
-		Appearance.Races Race { get; }
+		Customize.Races Race { get; }
 		string Feminine { get; }
 		string Masculine { get; }
 		string DisplayName { get; }

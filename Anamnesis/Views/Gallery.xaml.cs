@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Views
@@ -18,6 +17,7 @@ namespace Anamnesis.Views
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using Serilog;
+	using XivToolsWpf;
 
 	/// <summary>
 	/// Interaction logic for Gallery.xaml.

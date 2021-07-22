@@ -6,75 +6,94 @@
 			 xmlns:controls="clr-namespace:Anamnesis.Styles.Controls"
 			 xmlns:cm3Drawers="clr-namespace:Anamnesis.Styles.Drawers"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" Width="256">
+			 d:DesignHeight="450">
 
 	<Grid x:Name="ContentArea">
 
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<Expander Style="{StaticResource Cm3Expander}">
-			<Expander.Header>
-				<StackPanel>
-					<controls:TextBlock Key="EquipmentSelector_Classes" Foreground="{DynamicResource MaterialDesignBody}"/>
-					<TextBlock x:Name="JobFilterText" Text="All" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="10"/>
+		<StackPanel Grid.Column="0" Width="256" Grid.RowSpan="2" Visibility="{Binding ShowFilters, Converter={StaticResource B2V}}">
+			<GroupBox Style="{StaticResource Cm3GroupBox}">
+				<GroupBox.Header>
+					<StackPanel>
+						<XivToolsWpf:TextBlock Key="EquipmentSelector_Classes" Foreground="{DynamicResource MaterialDesignBody}"/>
+						<TextBlock x:Name="JobFilterText" Text="All" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="10"/>
+					</StackPanel>
+				</GroupBox.Header>
+
+				<Border Background="{StaticResource MaterialDesignPaper}" CornerRadius="3">
+					<controls:ClassFilter HorizontalAlignment="Center" Value="{Binding ClassFilter}"/>
+				</Border>
+			</GroupBox>
+
+			<GroupBox Style="{StaticResource Cm3GroupBox}">
+				<GroupBox.Header>
+					<XivToolsWpf:TextBlock Key="EquipmentSelector_Categories" Foreground="{DynamicResource MaterialDesignBody}"/>
+				</GroupBox.Header>
+				<Border Background="{StaticResource MaterialDesignPaper}" CornerRadius="3">
+					<controls:ItemCategoryFilter Value="{Binding CategoryFilter}"/>
+				</Border>
+			</GroupBox>
+
+			<GroupBox Style="{StaticResource Cm3GroupBox}">
+				<StackPanel Margin="8, 3">
+					<CheckBox Padding="3" IsChecked="{Binding HideLocked}">
+						<XivToolsWpf:TextBlock Key="EquipmentSelector_HideLocked"/>
+					</CheckBox>
+					<CheckBox Padding="3" IsChecked="{Binding Ambidextrous}" Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}">
+						<XivToolsWpf:TextBlock Key="EquipmentSelector_Ambidextrous"/>
+					</CheckBox>
+					
 				</StackPanel>
-			</Expander.Header>
-			<Border Background="{StaticResource MaterialDesignPaper}" CornerRadius="3">
-				<controls:ClassFilter HorizontalAlignment="Center" Value="{Binding ClassFilter}"/>
-			</Border>
-		</Expander>
+			</GroupBox>
+		</StackPanel>
 
-		<ComboBox Grid.Row="1" Margin="6" SelectedIndex="{Binding ModeInt}">
-			<ComboBoxItem>
-				<controls:TextBlock Key="EquipmentSelector_All"/>
-			</ComboBoxItem>
-			<ComboBoxItem >
-				<controls:TextBlock Key="EquipmentSelector_Items"/>
-			</ComboBoxItem>
-			<ComboBoxItem >
-				<controls:TextBlock Key="EquipmentSelector_Props"/>
-			</ComboBoxItem>
-			<ComboBoxItem >
-				<controls:TextBlock Key="EquipmentSelector_Performance"/>
-			</ComboBoxItem>
-			<ComboBoxItem >
-				<controls:TextBlock Key="EquipmentSelector_Modded"/>
-			</ComboBoxItem>
-			<ComboBoxItem >
-				<controls:TextBlock Key="EquipmentSelector_Favorites"/>
-			</ComboBoxItem>
-		</ComboBox>
+		<Line Y1="0" Y2="1"
+			  StrokeThickness="1"
+			  Margin="2"
+			  Stroke="{DynamicResource MaterialDesignCardBackground}"
+			  Stretch="Fill" 
+			  Grid.Column="0" 
+			  Grid.RowSpan="2"
+			  HorizontalAlignment="Right"
+			  Visibility="{Binding ShowFilters, Converter={StaticResource B2V}}"/>
 
-			<!--<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="6, 0, 0, 0">
-			<RadioButton Margin="3" IsChecked="{Binding AllMode}">
-				<controls:TextBlock Key="EquipmentSelector_All" Margin="0, -3, 6, 0"/>
-			</RadioButton>
+		<StackPanel Grid.Row="0"
+					Grid.Column="1"
+					Orientation="Horizontal">
 
-			<RadioButton Margin="3" IsChecked="{Binding PropsMode}">
-				<controls:TextBlock Key="EquipmentSelector_Props" Margin="0, -3, 6, 0"/>
-			</RadioButton>
+			<ToggleButton Style="{StaticResource TransparentIconToggleButton}"
+						  Margin="0, 0, 12, 0"
+						  IsChecked="{Binding ShowFilters}"
+						  Height="32">
+				<StackPanel Orientation="Horizontal">
+					<XivToolsWpf:IconBlock Icon="AngleLeft" Margin="0, 0, 6, 0"/>
+					<XivToolsWpf:IconBlock Icon="Filter"/>
+				</StackPanel>
+			</ToggleButton>
 
-			<RadioButton Margin="3"  IsChecked="{Binding ItemsMode}">
-				<controls:TextBlock Key="EquipmentSelector_Items" Margin="0, -3, 6, 0"/>
-			</RadioButton>
+			<CheckBox Padding="3" IsChecked="{Binding AutoOffhand}" Visibility="{Binding IsMainHandSlot, Converter={StaticResource B2V}}">
+				<CheckBox.ToolTip>
+					<XivToolsWpf:TextBlock Key="EquipmentSelector_AutoOffhandTip"/>
+				</CheckBox.ToolTip>
+				<XivToolsWpf:TextBlock Key="EquipmentSelector_AutoOffhand"/>
+			</CheckBox>
 
-			<RadioButton Margin="3"  IsChecked="{Binding ModdedMode}">
-				<controls:TextBlock Key="EquipmentSelector_Modded" Margin="0, -3, 6, 0"/>
-			</RadioButton>
-		</StackPanel>-->
+		</StackPanel>
 
-		<CheckBox Grid.Row="2" Margin="10, 3, 10, 3" IsChecked="{Binding PairEquip}" Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}">
-			<controls:TextBlock Key="Character_Equipment_PairEquip"/>
-		</CheckBox>
-
-		<cm3Drawers:SelectorDrawer
-			Grid.Row="3"
+		<cm3Drawers:SelectorDrawer Width="256"
+			Grid.Column="1"
+			Grid.Row="1"
 			x:Name="Selector"
 			Close="OnClose" 
 			Filter="OnFilter"
@@ -112,7 +131,7 @@
 
 						</StackPanel>
 
-				
+
 
 						<Rectangle Grid.ColumnSpan="3" 
 									   Grid.RowSpan="2" 

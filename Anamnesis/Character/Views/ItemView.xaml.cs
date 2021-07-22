@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Character.Views
@@ -14,10 +13,10 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
-	using Anamnesis.Styles.DependencyProperties;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
-
+	using XivToolsWpf;
+	using XivToolsWpf.DependencyProperties;
 	using Vector = Anamnesis.Memory.Vector;
 
 	/// <summary>
@@ -127,70 +126,57 @@ namespace Anamnesis.Character.Views
 
 		private void OnClick(object sender, RoutedEventArgs e)
 		{
-			EquipmentSelector selector = new EquipmentSelector(this.Slot);
-			SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.PairEquip));
+			EquipmentSelector selector = new EquipmentSelector(this.Slot, this.Actor);
+			SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.AutoOffhand));
 		}
 
-		private void SetItem(IItem? item, bool pairEquip)
+		private void SetItem(IItem? item, bool autoOffhand)
 		{
-			if (item == this.Item)
-				return;
-
 			this.lockViewModel = true;
-
 			IMemoryViewModel? memory = this.ItemModel?.GetParent<IMemoryViewModel>();
 			memory?.SetMemoryMode(MemoryModes.Write);
-
-			ushort modelSet = 0;
-			ushort modelBase = 0;
-			ushort modelVariant = 0;
 
 			if (item != null)
 			{
 				bool useSubModel = this.Slot == ItemSlots.OffHand && item.HasSubModel;
+				ushort modelSet = useSubModel ? item.SubModelSet : item.ModelSet;
+				ushort modelBase = useSubModel ? item.SubModelBase : item.ModelBase;
+				ushort modelVariant = useSubModel ? item.SubModelVariant : item.ModelVariant;
 
-				modelSet = useSubModel ? item.SubModelSet : item.ModelSet;
-				modelBase = useSubModel ? item.SubModelBase : item.ModelBase;
-				modelVariant = useSubModel ? (byte)item.SubModelVariant : (byte)item.ModelVariant;
-			}
-
-			if (pairEquip
-				&& this.ItemModel is WeaponViewModel
-				&& item != null
-				&& item.SubModelSet != 0
-				&& this.Actor?.MainHand != null
-				&& this.Actor?.OffHand != null)
-			{
-				this.Actor.MainHand.Set = item.ModelSet;
-				this.Actor.MainHand.Base = item.ModelBase;
-				this.Actor.MainHand.Variant = item.ModelVariant;
-
-				this.Actor.OffHand.Set = item.SubModelSet;
-				this.Actor.OffHand.Base = item.SubModelBase;
-				this.Actor.OffHand.Variant = item.SubModelVariant;
-			}
-			else
-			{
-				if (this.ItemModel is ItemViewModel itemView)
+				static void SetModel(IStructViewModel? itemModel, ushort modelSet, ushort modelBase, ushort modelVariant)
 				{
-					itemView.Base = modelBase;
-					itemView.Variant = (byte)modelVariant;
-
-					if (modelBase == 0)
+					if (itemModel is ItemViewModel itemView)
 					{
-						itemView.Dye = 0;
+						itemView.Base = modelBase;
+						itemView.Variant = (byte)modelVariant;
+
+						if (modelBase == 0)
+						{
+							itemView.Dye = 0;
+						}
+					}
+					else if (itemModel is WeaponViewModel weaponView)
+					{
+						weaponView.Set = modelSet;
+						weaponView.Base = modelBase;
+						weaponView.Variant = modelVariant;
+
+						if (modelSet == 0)
+						{
+							weaponView.Dye = 0;
+						}
 					}
 				}
-				else if (this.ItemModel is WeaponViewModel weaponView)
-				{
-					weaponView.Set = modelSet;
-					weaponView.Base = modelBase;
-					weaponView.Variant = modelVariant;
 
-					if (modelSet == 0)
-					{
-						weaponView.Dye = 0;
-					}
+				SetModel(this.ItemModel, modelSet, modelBase, modelVariant);
+				if (autoOffhand && this.Slot == ItemSlots.MainHand
+					&& item is GameData.ViewModels.ItemViewModel ivm
+					&& ivm.Value.EquipSlotCategory.Value?.OffHand == -1)
+				{
+					if (ivm.HasSubModel)
+						SetModel(this.Actor?.OffHand, ivm.SubModelSet, ivm.SubModelBase, ivm.SubModelVariant);
+					else
+						SetModel(this.Actor?.OffHand, 0, 0, 0);
 				}
 			}
 
@@ -222,26 +208,43 @@ namespace Anamnesis.Character.Views
 			if (this.lockViewModel)
 				return;
 
-			Application.Current.Dispatcher.Invoke((Action)(() =>
+			Task.Run(async () =>
 			{
+				await Task.Yield();
+
+				await Dispatch.MainThread();
 				if (this.ItemModel == null || !this.ItemModel.Enabled || GameDataService.Dyes == null)
 					return;
 
-				if (this.ItemModel is ItemViewModel item)
-				{
-					this.Item = ItemUtility.GetItem(this.Slot, 0, item.Base, item.Variant);
-					this.Dye = GameDataService.Dyes.Get(item.Dye);
-				}
-				else if (this.ItemModel is WeaponViewModel weapon)
-				{
-					this.Item = ItemUtility.GetItem(this.Slot, weapon.Set, weapon.Base, weapon.Variant);
+				IStructViewModel? valueVm = this.ItemModel;
 
-					if (weapon.Set == 0)
-						weapon.Dye = 0;
+				await Dispatch.NonUiThread();
 
-					this.Dye = GameDataService.Dyes.Get(weapon.Dye);
+				if (valueVm is ItemViewModel itemVm)
+				{
+					IItem? item = ItemUtility.GetItem(this.Slot, 0, itemVm.Base, itemVm.Variant);
+					IDye? dye = GameDataService.Dyes.Get(itemVm.Dye);
+
+					await Dispatch.MainThread();
+
+					this.Item = item;
+					this.Dye = dye;
 				}
-			}));
+				else if (valueVm is WeaponViewModel weaponVm)
+				{
+					IItem? item = ItemUtility.GetItem(this.Slot, weaponVm.Set, weaponVm.Base, weaponVm.Variant);
+
+					if (weaponVm.Set == 0)
+						weaponVm.Dye = 0;
+
+					IDye? dye = GameDataService.Dyes.Get(weaponVm.Dye);
+
+					await Dispatch.MainThread();
+
+					this.Item = item;
+					this.Dye = dye;
+				}
+			});
 		}
 	}
 }

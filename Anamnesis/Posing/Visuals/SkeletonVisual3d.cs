@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.PoseModule
@@ -22,6 +21,7 @@ namespace Anamnesis.PoseModule
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using Serilog;
+	using XivToolsWpf;
 	using AnQuaternion = Anamnesis.Memory.Quaternion;
 
 	[AddINotifyPropertyChangedInterface]
@@ -88,18 +88,18 @@ namespace Anamnesis.PoseModule
 
 		public ObservableCollection<BoneVisual3d> Bones { get; private set; } = new ObservableCollection<BoneVisual3d>();
 
-		public bool HasTail => this.Actor?.Customize?.Race == Appearance.Races.Miqote
-			|| this.Actor?.Customize?.Race == Appearance.Races.AuRa
-			|| this.Actor?.Customize?.Race == Appearance.Races.Hrothgar;
+		public bool HasTail => this.Actor?.Customize?.Race == Customize.Races.Miqote
+			|| this.Actor?.Customize?.Race == Customize.Races.AuRa
+			|| this.Actor?.Customize?.Race == Customize.Races.Hrothgar;
 
 		public bool IsCustomFace => this.IsMiqote || this.IsHrothgar;
-		public bool IsMiqote => this.Actor?.Customize?.Race == Appearance.Races.Miqote;
-		public bool IsViera => this.Actor?.Customize?.Race == Appearance.Races.Viera;
+		public bool IsMiqote => this.Actor?.Customize?.Race == Customize.Races.Miqote;
+		public bool IsViera => this.Actor?.Customize?.Race == Customize.Races.Viera;
 		public bool IsVieraEars01 => this.IsViera && this.Actor?.Customize?.TailEarsType <= 1;
 		public bool IsVieraEars02 => this.IsViera && this.Actor?.Customize?.TailEarsType == 2;
 		public bool IsVieraEars03 => this.IsViera && this.Actor?.Customize?.TailEarsType == 3;
 		public bool IsVieraEars04 => this.IsViera && this.Actor?.Customize?.TailEarsType == 4;
-		public bool IsHrothgar => this.Actor?.Customize?.Race == Appearance.Races.Hrothgar;
+		public bool IsHrothgar => this.Actor?.Customize?.Race == Customize.Races.Hrothgar;
 		public bool HasTailOrEars => this.IsViera || this.HasTail;
 
 		public AnQuaternion RootRotation

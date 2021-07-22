@@ -118,11 +118,6 @@
 		<None Remove="Assets\Zodiark.png" />
 		<None Remove="cmtool-icon.ico" />
 		<None Remove="FodyWeavers.xml" />
-		<None Remove="stylecop.json" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<AdditionalFiles Include="stylecop.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -130,12 +125,8 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="FontAwesome.Sharp" Version="5.15.1" />
 		<PackageReference Include="Lumina" Version="3.3.0" />
 		<PackageReference Include="Lumina.Excel" Version="5.50.0" />
-		<PackageReference Include="Markdig.Wpf.Signed" Version="0.4.0" />
-		<PackageReference Include="MaterialDesignColors" Version="1.2.7" />
-		<PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
 		<PackageReference Include="PropertyChanged.Fody" Version="3.3.1">
 			<PrivateAssets>All</PrivateAssets>
 			<IncludeAssets></IncludeAssets>
@@ -355,6 +346,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Lib\XivToolsWpf\XivToolsWpf.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<EmbeddedResource Update="Resources.resx">
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 			<Generator>ResXFileCodeGenerator</Generator>
@@ -363,9 +358,6 @@
 
 	<ItemGroup>
 	  <None Update="Download DotNET Desktop Runtime.URL">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Version.txt">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>

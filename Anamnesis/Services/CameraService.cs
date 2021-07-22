@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis
@@ -36,7 +35,7 @@ namespace Anamnesis
 				if (this.Camera == null)
 					return;
 
-				this.Camera.MaxZoom = value ? 256 : 20;
+				this.Camera.MaxZoom = value ? 350 : 20;
 				this.Camera.MinZoom = value ? 0 : 1.75f;
 				this.Camera.YMin = value ? 1.5f : 1.25f;
 				this.Camera.YMax = value ? -1.5f : -1.4f;
@@ -65,6 +64,9 @@ namespace Anamnesis
 			while (this.IsAlive)
 			{
 				await Task.Delay(50);
+
+				if (!GameService.Ready)
+					continue;
 
 				if (this.Camera == null)
 					continue;

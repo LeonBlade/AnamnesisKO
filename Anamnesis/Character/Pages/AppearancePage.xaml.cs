@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Character.Pages
@@ -163,10 +162,10 @@ namespace Anamnesis.Character.Pages
 		private void OnActorChanged(ActorViewModel? actor)
 		{
 			this.Actor = actor;
-			bool hasValidSelection = actor != null && (actor.ObjectKind == ActorTypes.Player || actor.ObjectKind == ActorTypes.BattleNpc || actor.ObjectKind == ActorTypes.EventNpc);
 
-			Application.Current.Dispatcher.Invoke(() =>
+			Application.Current.Dispatcher.InvokeAsync(() =>
 			{
+				bool hasValidSelection = actor != null && (actor.ObjectKind == ActorTypes.Player || actor.ObjectKind == ActorTypes.BattleNpc || actor.ObjectKind == ActorTypes.EventNpc);
 				this.IsEnabled = hasValidSelection;
 			});
 		}

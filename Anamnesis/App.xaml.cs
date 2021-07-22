@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis
@@ -19,6 +18,7 @@ namespace Anamnesis
 	using Anamnesis.Services;
 	using MaterialDesignThemes.Wpf;
 	using Serilog;
+	using XivToolsWpf;
 	using Application = System.Windows.Application;
 
 	/// <summary>
@@ -88,6 +88,8 @@ namespace Anamnesis
 
 				LogService.CreateLog();
 
+				Themes.ApplySystemTheme();
+
 				this.CheckWorkingDirectory();
 				this.CheckForProcesses();
 
@@ -102,7 +104,7 @@ namespace Anamnesis
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex, "Failed to start application");
+				Log.Warning(ex, "Failed to start application");
 				ErrorDialog.ShowError(ExceptionDispatchInfo.Capture(ex), true);
 			}
 
@@ -138,7 +140,7 @@ namespace Anamnesis
 
 			if (currentDir.Contains("\\AppData\\Local\\Temp\\"))
 			{
-				throw new Exception("Attempt to run from temporary directory. (Are you running Anamneis from a zip file?)");
+				throw new Exception("Attempt to run from temporary directory. (Are you running Anamnesis from a zip file?)");
 			}
 		}
 

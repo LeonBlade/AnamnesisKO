@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Character.Utilities
@@ -17,7 +16,7 @@ namespace Anamnesis.Character.Utilities
 		public static readonly InvisibleBodyItem InvisibileBodyItem = new InvisibleBodyItem();
 		public static readonly InvisibleHeadItem InvisibileHeadItem = new InvisibleHeadItem();
 
-		private static Dictionary<string, IItem> itemLookup = new Dictionary<string, IItem>();
+		private static readonly Dictionary<string, IItem> ItemLookup = new Dictionary<string, IItem>();
 
 		/// <summary>
 		/// Searches the gamedata service item list for an item with the given model attributes.
@@ -31,13 +30,13 @@ namespace Anamnesis.Character.Utilities
 				return NpcBodyItem;
 
 			string lookupKey = slot + "_" + modelSet + "_" + modelBase + "_" + modelVariant;
-			if (!itemLookup.ContainsKey(lookupKey))
+			if (!ItemLookup.ContainsKey(lookupKey))
 			{
 				IItem item = ItemSearch(slot, modelSet, modelBase, modelVariant);
-				itemLookup.Add(lookupKey, item);
+				ItemLookup.Add(lookupKey, item);
 			}
 
-			return itemLookup[lookupKey];
+			return ItemLookup[lookupKey];
 		}
 
 		public static IItem GetDummyItem(ushort modelSet, ushort modelBase, ushort modelVariant)

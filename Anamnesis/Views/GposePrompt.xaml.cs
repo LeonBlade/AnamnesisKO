@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Views
@@ -7,6 +6,7 @@ namespace Anamnesis.Views
 	using System.Threading.Tasks;
 	using System.Windows.Controls;
 	using Anamnesis.Services;
+	using XivToolsWpf;
 
 	/// <summary>
 	/// Interaction logic for GposePrompt.xaml.

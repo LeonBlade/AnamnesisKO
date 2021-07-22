@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GUI.Dialogs
@@ -10,6 +9,7 @@ namespace Anamnesis.GUI.Dialogs
 	using System.Windows.Controls;
 	using Anamnesis;
 	using Anamnesis.Services;
+	using XivToolsWpf;
 
 	/// <summary>
 	/// Interaction logic for GenericDialog.xaml.

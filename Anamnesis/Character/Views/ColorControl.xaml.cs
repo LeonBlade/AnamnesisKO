@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Character.Views
@@ -10,8 +9,8 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
-	using Anamnesis.Styles.DependencyProperties;
 	using PropertyChanged;
+	using XivToolsWpf.DependencyProperties;
 	using WpfColor = System.Windows.Media.Color;
 
 	/// <summary>
@@ -21,8 +20,8 @@ namespace Anamnesis.Character.Views
 	public partial class ColorControl : UserControl
 	{
 		public static readonly IBind<byte> ValueDp = Binder.Register<byte, ColorControl>(nameof(Value), OnValueChanged);
-		public static readonly IBind<Appearance.Genders> GenderDp = Binder.Register<Appearance.Genders, ColorControl>(nameof(Gender), OnGenderChanged);
-		public static readonly IBind<Appearance.Tribes> TribeDp = Binder.Register<Appearance.Tribes, ColorControl>(nameof(Tribe), OnTribeChanged);
+		public static readonly IBind<Customize.Genders> GenderDp = Binder.Register<Customize.Genders, ColorControl>(nameof(Gender), OnGenderChanged);
+		public static readonly IBind<Customize.Tribes> TribeDp = Binder.Register<Customize.Tribes, ColorControl>(nameof(Tribe), OnTribeChanged);
 
 		private ColorData.Entry[]? colors;
 
@@ -48,13 +47,13 @@ namespace Anamnesis.Character.Views
 			set;
 		}
 
-		public Appearance.Genders Gender
+		public Customize.Genders Gender
 		{
 			get => GenderDp.Get(this);
 			set => GenderDp.Set(this, value);
 		}
 
-		public Appearance.Tribes Tribe
+		public Customize.Tribes Tribe
 		{
 			get => TribeDp.Get(this);
 			set => TribeDp.Set(this, value);
@@ -78,14 +77,17 @@ namespace Anamnesis.Character.Views
 			}
 		}
 
-		private static void OnGenderChanged(ColorControl sender, Appearance.Genders value)
+		private static void OnGenderChanged(ColorControl sender, Customize.Genders value)
 		{
 			sender.colors = sender.GetColors();
 			sender.PreviewColor.Color = sender.WpfColor;
 		}
 
-		private static void OnTribeChanged(ColorControl sender, Appearance.Tribes value)
+		private static void OnTribeChanged(ColorControl sender, Customize.Tribes value)
 		{
+			if (!Enum.IsDefined<Customize.Tribes>(value))
+				return;
+
 			sender.colors = sender.GetColors();
 			sender.PreviewColor.Color = sender.WpfColor;
 		}

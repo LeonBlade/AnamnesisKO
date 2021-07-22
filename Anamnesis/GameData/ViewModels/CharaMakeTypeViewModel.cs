@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.ViewModels
@@ -21,9 +20,9 @@ namespace Anamnesis.GameData.ViewModels
 		}
 
 		public override string Name => this.Key.ToString();
-		public Appearance.Genders Gender => (Appearance.Genders)this.Value.Gender;
-		public Appearance.Races Race => (Appearance.Races)this.Value.Race!.Row;
-		public Appearance.Tribes Tribe => (Appearance.Tribes)this.Value.Tribe!.Row;
+		public Customize.Genders Gender => (Customize.Genders)this.Value.Gender;
+		public Customize.Races Race => (Customize.Races)this.Value.Race!.Row;
+		public Customize.Tribes Tribe => (Customize.Tribes)this.Value.Tribe!.Row;
 
 		public IEnumerable<ImageSource> FacialFeatures
 		{

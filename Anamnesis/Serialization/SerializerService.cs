@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Serialization
@@ -29,6 +28,7 @@ namespace Anamnesis.Serialization
 			Options.Converters.Add(new VectorConverter());
 			Options.Converters.Add(new IItemConverter());
 			Options.Converters.Add(new IDyeConverter());
+			Options.Converters.Add(new ItemCategoriesConverter());
 		}
 
 		public static string Serialize(object obj)

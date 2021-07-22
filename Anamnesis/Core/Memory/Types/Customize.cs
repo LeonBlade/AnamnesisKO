@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory
@@ -8,7 +7,7 @@ namespace Anamnesis.Memory
 	using System.Runtime.InteropServices;
 
 	[StructLayout(LayoutKind.Sequential)]
-	public struct Appearance
+	public struct Customize
 	{
 		public Races Race;
 		public Genders Gender;
@@ -96,9 +95,9 @@ namespace Anamnesis.Memory
 			LegacyTattoo = 128,
 		}
 
-		public static Appearance Default()
+		public static Customize Default()
 		{
-			Appearance ap = default;
+			Customize ap = default;
 
 			ap.Race = Races.Hyur;
 			ap.Gender = Genders.Feminine;
@@ -110,23 +109,23 @@ namespace Anamnesis.Memory
 	}
 
 	#pragma warning disable SA1402
-	public class AppearanceViewModel : StructViewModelBase<Appearance>
+	public class CustomizeViewModel : StructViewModelBase<Customize>
 	{
-		public AppearanceViewModel(ActorViewModel parent)
+		public CustomizeViewModel(ActorViewModel parent)
 			: base(parent, nameof(ActorViewModel.Customize))
 		{
 		}
 
-		public AppearanceViewModel(ActorViewModel parent, string propertyName)
+		public CustomizeViewModel(ActorViewModel parent, string propertyName)
 			: base(parent, propertyName)
 		{
 		}
 
-		[ModelField] public Appearance.Races Race { get; set; }
-		[ModelField] public Appearance.Genders Gender { get; set; }
-		[ModelField] public Appearance.Ages Age { get; set; }
+		[ModelField] public Customize.Races Race { get; set; }
+		[ModelField] public Customize.Genders Gender { get; set; }
+		[ModelField] public Customize.Ages Age { get; set; }
 		[ModelField] public byte Height { get; set; }
-		[ModelField] public Appearance.Tribes Tribe { get; set; }
+		[ModelField] public Customize.Tribes Tribe { get; set; }
 		[ModelField] public byte Head { get; set; }
 		[ModelField] public byte Hair { get; set; }
 		[ModelField] public byte HighlightType { get; set; }
@@ -134,7 +133,7 @@ namespace Anamnesis.Memory
 		[ModelField] public byte REyeColor { get; set; }
 		[ModelField] public byte HairTone { get; set; }
 		[ModelField] public byte Highlights { get; set; }
-		[ModelField] public Appearance.FacialFeature FacialFeatures { get; set; }
+		[ModelField] public Customize.FacialFeature FacialFeatures { get; set; }
 		[ModelField] public byte LimbalEyes { get; set; }
 		[ModelField] public byte Eyebrows { get; set; }
 		[ModelField] public byte LEyeColor { get; set; }

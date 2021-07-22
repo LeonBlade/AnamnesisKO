@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GUI
@@ -24,12 +23,13 @@ namespace Anamnesis.GUI
 	using Anamnesis.Utils;
 	using Anamnesis.Views;
 	using PropertyChanged;
+	using XivToolsWpf.Windows;
 
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	public partial class MainWindow : Window
+	public partial class MainWindow : ChromedWindow
 	{
 		private bool hasSetPosition = false;
 
@@ -61,14 +61,39 @@ namespace Anamnesis.GUI
 		public bool IsDebug => false;
 #endif
 
+		protected override void OnActivated(EventArgs e)
+		{
+			base.OnActivated(e);
+
+			if (SettingsService.Current.Opacity == 1.0)
+			{
+				this.Opacity = 1.0;
+				return;
+			}
+
+			this.Opacity = 1.0;
+		}
+
+		protected override void OnDeactivated(EventArgs e)
+		{
+			base.OnDeactivated(e);
+
+			if (SettingsService.Current.Opacity == 1.0)
+				return;
+
+			this.Opacity = SettingsService.Current.Opacity;
+		}
+
 		private void OnSettingsChanged(object? sender = null, PropertyChangedEventArgs? args = null)
 		{
-			this.Opacity = SettingsService.Current.Opacity;
 			this.WindowScale.ScaleX = SettingsService.Current.Scale;
 			this.WindowScale.ScaleY = SettingsService.Current.Scale;
 
-			if (SettingsService.Current.UseCustomBorder != this.AllowsTransparency)
+			if (SettingsService.Current.EnableTranslucency != this.EnableTranslucency)
 			{
+				this.EnableTranslucency = SettingsService.Current.EnableTranslucency;
+
+				// relaod the window
 				if (this.IsLoaded)
 				{
 					App.Current.MainWindow = new MainWindow();
@@ -76,23 +101,10 @@ namespace Anamnesis.GUI
 					App.Current.MainWindow.Show();
 					return;
 				}
-
-				if (SettingsService.Current.UseCustomBorder)
-				{
-					this.WindowStyle = WindowStyle.None;
-					this.AllowsTransparency = true;
-				}
-				else
-				{
-					this.AllowsTransparency = false;
-					this.WindowStyle = WindowStyle.ThreeDBorderWindow;
-				}
 			}
 
-			if (!SettingsService.Current.UseCustomBorder || !SettingsService.Current.StayTransparent)
-				this.Opacity = 1.0;
-
-			this.ContentArea.Margin = new Thickness(SettingsService.Current.UseCustomBorder ? 10 : 0);
+			if (SettingsService.Current.Opacity < 1)
+				this.TransprentWhenNotInFocus = true;
 
 			if (!this.hasSetPosition && SettingsService.Current.WindowPosition.X != 0)
 			{
@@ -174,32 +186,14 @@ namespace Anamnesis.GUI
 			});
 		}
 
-		private void OnTitleBarMouseDown(object sender, MouseButtonEventArgs e)
+		private async void OnSettingsClick(object sender, RoutedEventArgs e)
 		{
-			if (e.ChangedButton == MouseButton.Left)
+			if (this.DrawerHost.IsRightDrawerOpen)
 			{
-				this.DragMove();
-			}
-		}
-
-		private void Window_Activated(object sender, EventArgs e)
-		{
-			if (!SettingsService.Current.UseCustomBorder)
-			{
-				this.ActiveBorder.Visibility = Visibility.Collapsed;
+				this.DrawerHost.IsRightDrawerOpen = false;
 				return;
 			}
 
-			this.ActiveBorder.Visibility = Visibility.Visible;
-		}
-
-		private void Window_Deactivated(object sender, EventArgs e)
-		{
-			this.ActiveBorder.Visibility = Visibility.Collapsed;
-		}
-
-		private async void OnCloseClick(object sender, RoutedEventArgs e)
-		{
 			if (PoseService.Exists && PoseService.Instance.IsEnabled)
 			{
 				bool? result = await GenericDialog.Show(LocalizationService.GetString("Pose_WarningQuit"), LocalizationService.GetString("Common_Confirm"), MessageBoxButton.OKCancel);
@@ -208,25 +202,11 @@ namespace Anamnesis.GUI
 				{
 					return;
 				}
+
+				PoseService.Instance.IsEnabled = false;
 			}
 
-			this.Close();
-		}
-
-		private void OnMinimiseClick(object sender, RoutedEventArgs e)
-		{
-			this.WindowState = WindowState.Minimized;
-		}
-
-		private void OnSettingsClick(object sender, RoutedEventArgs e)
-		{
-			if (this.DrawerHost.IsRightDrawerOpen)
-			{
-				this.DrawerHost.IsRightDrawerOpen = false;
-				return;
-			}
-
-			ViewService.ShowDrawer<SettingsView>();
+			await ViewService.ShowDrawer<SettingsView>();
 		}
 
 		private void OnAboutClick(object sender, RoutedEventArgs e)
@@ -238,30 +218,6 @@ namespace Anamnesis.GUI
 			}
 
 			ViewService.ShowDrawer<AboutView>();
-		}
-
-		private void Window_MouseEnter(object sender, MouseEventArgs e)
-		{
-			if (SettingsService.Current.Opacity == 1.0)
-			{
-				this.Opacity = 1.0;
-				return;
-			}
-
-			if (SettingsService.Current.StayTransparent)
-				return;
-
-			this.Opacity = 1.0;
-			////this.Animate(Window.OpacityProperty, 1.0, 100);
-		}
-
-		private void Window_MouseLeave(object sender, MouseEventArgs e)
-		{
-			if (SettingsService.Current.Opacity == 1.0)
-				return;
-
-			////this.Animate(Window.OpacityProperty, SettingsService.Current.Opacity, 250);
-			this.Opacity = SettingsService.Current.Opacity;
 		}
 
 		private void OnResizeDrag(object sender, DragDeltaEventArgs e)
@@ -319,8 +275,19 @@ namespace Anamnesis.GUI
 			}
 		}
 
-		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		private async void Window_Closing(object sender, CancelEventArgs e)
 		{
+			if (PoseService.Exists && PoseService.Instance.IsEnabled)
+			{
+				bool? result = await GenericDialog.Show(LocalizationService.GetString("Pose_WarningQuit"), LocalizationService.GetString("Common_Confirm"), MessageBoxButton.OKCancel);
+
+				if (result != true)
+				{
+					e.Cancel = true;
+					return;
+				}
+			}
+
 			SettingsService.SettingsChanged -= this.OnSettingsChanged;
 			ViewService.ShowingDrawer -= this.OnShowDrawer;
 
