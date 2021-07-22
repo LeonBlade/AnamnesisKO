@@ -44,7 +44,7 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x0F70)] public Weapon OffHand;
 		[FieldOffset(0x1040)] public Equipment Equipment;
 		[FieldOffset(0x182C)] public float Transparency;
-		[FieldOffset(0x1898)] public Customize Customize;
+		[FieldOffset(0x1878)] public Customize Customize;
 
 		public string Name
 		{
