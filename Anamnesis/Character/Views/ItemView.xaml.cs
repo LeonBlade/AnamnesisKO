@@ -171,7 +171,7 @@ namespace Anamnesis.Character.Views
 				SetModel(this.ItemModel, modelSet, modelBase, modelVariant);
 				if (autoOffhand && this.Slot == ItemSlots.MainHand
 					&& item is GameData.ViewModels.ItemViewModel ivm
-					&& ivm.Value.EquipSlotCategory.Value?.OffHand == -1)
+					&& ivm.Value.EquipSlotCategory?.Value?.OffHand == -1)
 				{
 					if (ivm.HasSubModel)
 						SetModel(this.Actor?.OffHand, ivm.SubModelSet, ivm.SubModelBase, ivm.SubModelVariant);

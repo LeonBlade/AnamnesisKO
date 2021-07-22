@@ -1,5 +1,4 @@
 // © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Sheets
@@ -18,6 +17,7 @@ namespace Anamnesis.GameData.Sheets
 		public ushort Icon;
 		public byte ItemUICategory;
 		public LazyRow<Generated.EquipSlotCategory>? EquipSlotCategory;
+		public byte EquipRestriction;
 		public LazyRow<ClassJobCategory>? ClassJobCategory;
 		public ulong ModelMain;
 		public ulong ModelSub;
@@ -32,6 +32,7 @@ namespace Anamnesis.GameData.Sheets
 			this.Icon = parser.ReadColumn<ushort>(10);
 			this.ItemUICategory = parser.ReadColumn<byte>(15);
 			this.EquipSlotCategory = new LazyRow<Generated.EquipSlotCategory>(lumina, parser.ReadColumn<byte>(17), language);
+			this.EquipRestriction = parser.ReadColumn<byte>(43);
 			this.ClassJobCategory = new LazyRow<ClassJobCategory>(lumina, parser.ReadColumn<byte>(44), language);
 			this.ModelMain = parser.ReadColumn<ulong>(48);
 			this.ModelSub = parser.ReadColumn<ulong>(49);
