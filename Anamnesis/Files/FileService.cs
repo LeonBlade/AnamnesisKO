@@ -32,7 +32,7 @@ namespace Anamnesis.Files
 			new LegacyPoseFileInfo(),
 		};
 
-		public static readonly string StoreDirectory = "%AppData%/Anamnesis/";
+		public static readonly string StoreDirectory = "%AppData%/AnamnesisKO/";
 
 		/// <summary>
 		/// Replaces special folders (%ApplicationData%) with the actual path.
