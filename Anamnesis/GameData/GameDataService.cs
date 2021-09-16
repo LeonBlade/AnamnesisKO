@@ -50,7 +50,13 @@ namespace Anamnesis.Services
 
 			try
 			{
-				this.lumina = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\");
+				var options = new Lumina.LuminaOptions()
+				{
+					DefaultExcelLanguage = Lumina.Data.Language.Korean,
+					PanicOnSheetChecksumMismatch = false,
+				};
+
+				this.lumina = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\", options);
 
 				Races = new LuminaSheet<IRace, Race, RaceViewModel>(this.lumina);
 				Tribes = new LuminaSheet<ITribe, Tribe, TribeViewModel>(this.lumina);
