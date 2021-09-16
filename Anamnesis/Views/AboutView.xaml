@@ -51,7 +51,7 @@
 			</GroupBox.Header>
 
 			<TextBlock TextWrapping="Wrap" Margin="6,0,0,15" Style="{StaticResource Body}">Anamnesis is proudly Free and Open Source Software. Please feel free to leave the team a Star on 
-				<fa:IconBlock Icon="Github"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/imchillin/Anamnesis" FontSize="12">GitHub</Hyperlink>.
+				<fa:IconBlock Icon="Github"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/LeonBlade/AnamnesisKO" FontSize="12">GitHub</Hyperlink>.
 					<LineBreak /><LineBreak />
 					Anamnesis is built with the following projects:
 					<LineBreak />
